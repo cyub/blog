@@ -15,7 +15,7 @@
 .posts-collapse {
   position: relative;
   z-index: $zindex-1;
-  
+
   &::after {
     content: " ";
     position: absolute;
@@ -60,7 +60,6 @@
     the-transition();
     transition-property: border;
     border-bottom: 1px dashed $grey-light;
-
     &::before {
       content: " ";
       position: absolute;
@@ -90,12 +89,21 @@
     top: 5px;
   }
 
+  .archive-page-counter {
+    font-weight: 300;
+    font-family: 'Lucida Console', 'Monaco', 'monospace';
+  }
+  .archive-year {
+    font-weight: 300;
+    font-family: 'Lucida Console', 'Monaco', 'monospace';
+  }
+
   .post-comments-count { display: none; }
 
   .post-title {
     margin-left: 60px;
     font-size: 16px;
-    font-weight: normal;
+    font-weight: 300;
     line-height: inherit;
 
     &::after {

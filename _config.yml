@@ -3,17 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: Tink's Blog
 subtitle:
-description:
-keywords:
-author: John Doe
-language:
+description: 一只船孤独地航行在海上，它既不寻求幸福，也不逃避幸福。它只是向前航行，底下是沉静碧蓝的大海，而头顶是金色的太阳
+author: tinker
+language: zh-CN
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://www.cyub.vip/
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -43,16 +42,16 @@ highlight:
   line_number: true
   auto_detect: false
   tab_replace:
-  
+
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
   path: ''
-  per_page: 10
+  per_page: 8
   order_by: -date
-  
+
 # Category & Tag
 default_category: uncategorized
 category_map:
@@ -73,9 +72,28 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: next
+
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type:
+
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
+
+sitemap:
+  path:sitemap.xml
+
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:
+  content_limit: 140
+  content_limit_delim: ' '
