@@ -2,8 +2,8 @@ FROM node:9
 
 WORKDIR /app
 
+ADD . /app
 RUN npm install -g hexo-cli
-RUN git clone https://github.com/cyub/blog.git .
 RUN npm install
 
 expose 4000
