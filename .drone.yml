@@ -1,0 +1,7 @@
+pipeline:
+  docker:
+    image: plugins/docker
+    repo: yubing/blog
+    dockerfile: Dockerfile
+    secrets: [ docker_username, docker_passwd ]
+    tags: latest
