@@ -4,4 +4,4 @@ pipeline:
     repo: yubing/blog
     dockerfile: ./Dockerfile
     secrets: [docker_username, docker_passwd]
-    tags: 0.2
+    tags: latest
