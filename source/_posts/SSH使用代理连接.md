@@ -5,8 +5,9 @@ tags:
 date: 2018-08-28 21:42:17
 ---
 使用ssh连接服务器，有时候我们需要使用代理来连接目标服务器。这时候有两个方法可以达到这个目的：
+
 1. 使用ssh的ProxyCommand选项
-2. 配置xshell代理
+2. 使用xshell代理
 
 # 1. 配置ProxyCommand选项
 
@@ -26,6 +27,11 @@ nc -x10.2.3.4:8080 -Xconnect host.example.com 80
 ```
 Host 192.168.33.10
     ProxyCommand    nc -X connect -x 127.0.0.1:10080 %h %p
+```
+
+记得将config权限设置成644，否则将报错：Bad owner or permissions
+```
+chmod 644 ~/.ssh/config
 ```
 
 然后使用下面命令连接服务器
