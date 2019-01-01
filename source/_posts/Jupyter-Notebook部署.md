@@ -1,8 +1,11 @@
 title: Jupyter Notebook部署
-date: 2018-12-31 11:57:42
 tags:
+  - Jupyter notebook
+  - Devops
+categories: []
+date: 2018-12-31 11:57:00
 ---
-[Jupter Notebook](https://jupyter.org/) 是科学计算必备工具之一，它是一个开源的web应用程序，允许你创建和共享实时代码，可以用来进行数据清理和转换、统计建模、数据可视化、机器学习等等工作。
+[Jupyter Notebook](https://jupyter.org/) 是科学计算必备工具之一，它是一个开源的web应用程序，允许你创建和共享实时代码，可以用来进行数据清理和转换、统计建模、数据可视化、机器学习等等工作。
 
 ![](http://static.cyub.vip/images/201812/jupyterpreview.png)
 
@@ -16,7 +19,7 @@ tags:
 
 ```js
 sudo apt-get install python3-pip // 安装pip3
-sudo pip3 install jupyter // 安装jupter
+sudo pip3 install jupyter // 安装jupyter
 ```
 <!--more-->
 
@@ -24,7 +27,7 @@ sudo pip3 install jupyter // 安装jupter
 
 ## 配置jupyter notebook
 
-下面命令将在~/.jupyter目录下面生成jupyter notebook配置文件`jupyter_notebook_config.py`
+下面命令将在`~/.jupyter`目录下面生成`jupyter notebook`配置文件`jupyter_notebook_config.py`
 
 ```js
 sudo jupyter notebook --generate-config
@@ -38,7 +41,7 @@ c.NotebookApp.port = 8888 // jupyter监听端口
 c.NotebookApp.allow_remote_access = True // 运行以主机名称的形式访问
 ```
 
-jupyter启动服务时候，默认是使用一次性token进行登录验证的。我们需要使用以下命令来给jupter服务配置登录密码：
+jupyter启动服务时候，默认是使用一次性token进行登录验证的。我们需要使用以下命令来给jupyter服务配置登录密码：
 
 ```js
 sudo jupyter notebook password
@@ -65,9 +68,21 @@ c.NotebookApp.password = u'sha1:5952f1c3c7ec:16852a1f8ee36f7cb716b74d3e0127efee1
 配置完成之后我们可以使用`jupyter notebook`来启动服务
 
 ```js
-cd ~/jupyter // 假定jupyter工作目录在~/jupyter
-sudo jupyter notebook
+cd /home/vagrant/jupyter // 假定jupyter工作目录在~/jupyter
+jupyter notebook
 ```
+
+由于jupyter是在远程服务器上面启动，监听的是127.0.0.1地址，外面无法访问，这时候我们可以使用ssh本地转发功能，将远程内网服务转发至本地端口。下面我们在本地执行以下命令(若window下面没有此命令，可使用xshell)：
+
+```js
+ssh -N -f -L 9999:localhost:8888 remote_user@remote_host
+```
+
+其中-N表示仅仅做端口转发，不执行任何命令。-f表示在后台运行。-L表示本地转发，其选项值代表ssh客户端和服务端转发的端口，9999为本地监听端口， localhost和8888为远程jupyter服务地址和端口。remote_user@remote_host代表远程主机用户和地址。
+
+完成上面操作，打开浏览器，地址栏输入`localhost:9999`，即访问的是远程的jupyter。
+
+ssh端口转发只是来测试jupyter服务功能，接下来继续部署公开jupyter服务。
 
 
 ## 配置Supervisor
@@ -140,12 +155,13 @@ sudo nginx -t // 测试nginx配置语法是否ok
 sudo nginx -s reload // 重新加载配置到nginx
 ```
 
-最后访问`jupyter.example.com`就可以使用jupyter notebook。
+最后打开浏览器访问`jupyter.example.com`就可以使用jupyter了。
 
 ## 参考
 
 - [Deploying Jupyter in Ubuntu with Nginx and Supervisor](http://www.albertauyeung.com/post/setup-jupyter-nginx-supervisor/)
 - [Jupyter官方文档之Running a notebook server](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html)
+- [实战 SSH 端口转发](https://www.ibm.com/developerworks/cn/linux/l-cn-sshforward/index.html)
 
 
 
