@@ -1,7 +1,9 @@
 title: Awk三十分钟入门到精通
 author: tinker
-date: 2019-10-04 22:17:58
 tags:
+  - Awk
+categories: []
+date: 2019-10-04 22:17:00
 ---
 ## 简介
 
