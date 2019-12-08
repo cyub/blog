@@ -1,8 +1,11 @@
 title: Docker使用过程中问题汇总（持续更新中）
-date: 2018-12-06 22:21:52
 tags:
+  - Docker
+  - 问题汇总
+categories: []
+date: 2018-12-06 22:21:00
 ---
-下面我是在学习和使用docker过程中遇到的一些问题以及解答，现记录下来备查。
+下面是我在在使用docker过程中遇到的一些问题以及解答，现记录下来备查。
 
 ## 1. 为什么有很多`<none>:</none>`镜像，有的删除不掉，有些却删除不掉？
  
@@ -135,6 +138,34 @@ USER node
 RUN mkdir /home/node/.npm-global && mkdir /home/node/app
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
+```
+
+## docker部署mysql时候，日志目录不可写问题？
+
+使用docker-compose进行编排：
+```
+# docker-compose.yml
+version: '3.3'
+
+services:
+   mysql-master:
+     image: mysql:5.7
+     container_name: mysql-master
+     restart: always
+     ports:
+       - "3306:3306"
+     environment:
+      - "MYSQL_ROOT_PASSWORD=123456"
+     volumes:
+       - /opt/mysql-master-slave/data/master:/var/lib/mysql # data目录
+       - /opt/mysql-master-slave/log/master:/var/log/mysql # 日志目录
+       - /opt/mysql-master-slave/mysqld-master.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf # 配置
+```
+
+容器启动时候，提示日志目录写入失败：
+
+```
+sudo chown 999:999 /opt/mysql-master-slave/log/master
 ```
 
 附：[Nodejs应用dockerize最佳时间](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#global-npm-dependencies)
