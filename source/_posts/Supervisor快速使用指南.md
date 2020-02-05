@@ -1,9 +1,10 @@
-title: Supervisor使用快速指南
+title: Supervisor快速使用指南
 author: tinker
 date: 2019-06-01 19:57:43
 tags:
 ---
 ## 简介
+
 Supervisor是用于监控和管理类UNIX操作下进程的C/S系统。Supervisor不是作为进程id为1的`init`的替代，它只是用来控制应用程序的进程，它会跟其他进程开机启动时候一样，通过pid为1的进程启动。为了高可用，它本身也需要监控。
 
 Supervisor的构成有4部分：
@@ -42,7 +43,7 @@ Supervisor特点有：
 
 - **兼容可靠**
 
-    Supervisor是使用Python语言编写的，支持在Linux, Mac OS X, Solaris, FreeBSD。它存在多年，并实际运行在很多生成服务器上。
+    Supervisor是使用Python语言编写的，支持在Linux, Mac OS X等系统。它存在多年，并实际运行在很多生产服务器上。
 
 
 ## 安装
@@ -149,7 +150,7 @@ serverurl=unix:///tmp/supervisor.sock ; supervisorctl连接的supervisord的sock
 supervisord -c /etc/supervisord.conf
 ```
 
-`supervisord`和`supervisorctl`按照以下顺序来寻找`supervisord.conf`文件，知道找到为知。
+`supervisord`和`supervisorctl`按照以下顺序来寻找`supervisord.conf`文件，直到找到为止。
 
 - $CWD/supervisord.conf
 - $CWD/etc/supervisord.conf
@@ -228,6 +229,8 @@ supervisorctl stop program_name // 停止某个程序
 supervisorctl stop all // 停止所有程序
 supervisorctl status // 查看程序状态
 ```
+
+**注意：** reread只是读取新配置，接着使用restart应用程序的启动并不会使用新的配置，而应该使用update
 
 ## Supervisor与Systemd比较
 
