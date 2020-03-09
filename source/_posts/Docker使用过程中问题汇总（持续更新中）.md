@@ -5,7 +5,7 @@ tags:
 categories: []
 date: 2018-12-06 22:21:00
 ---
-下面是我在在使用docker过程中遇到的一些问题以及解答，现记录下来备查。
+下面是我在使用docker过程中遇到的一些问题以及解答，现记录下来备查。
 
 ## 1. 为什么有很多`<none>:</none>`镜像，有的删除不掉，有些却删除不掉？
  
@@ -167,5 +167,36 @@ services:
 ```
 sudo chown 999:999 /opt/mysql-master-slave/log/master
 ```
+
+## docker部署grafana数据目录权限导致问题
+
+部署grafana时候由于挂载的数据目录权限问题会导致：
+
+```
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migration-from-a-previous-version-of-the-docker-container-to-5-1-or-later
+mkdir: cannot create directory '/var/lib/grafana/plugins': Permission denied
+```
+
+docker-composer.yml文件:
+
+```
+ grafana:
+     image: grafana/grafana
+     ports:
+       - "127.0.0.1:3100:3000"
+     environment:
+     - "GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana"
+     - GF_SECURITY_ADMIN_PASSWORD=123456
+     volumes:
+       - $PWD/data/grafana:/var/lib/grafana
+```
+
+解决办法：更改挂载目录的用户和组
+
+```
+sudo chown -R 472:472 $PWD/data/grafana
+```
+
 
 附：[Nodejs应用dockerize最佳时间](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#global-npm-dependencies)
