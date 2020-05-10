@@ -238,3 +238,266 @@ Date类型在Elasticsearch中以数值形式(long类型)存储。文档在索引
 
 - 真值，表示真值的有true,"true", "on", "yes", "1"
 - 假值，表示假值的有false, "false", "off", "no", "0", "", 0.0, 0
+
+## 文档的CRUD操作
+
+不同于关系型数据库的写时模式(schema on write)，Elasticsearch属于读时模式(schema on read)。在写入文档时候不需要明确设置各个字段类型，Elasticsearch会自动出推断字段类型。在真实项目中，我们应该明确通过设置索引的Mapping来指定字段和字段。
+
+### 文档创建(Create)
+
+```
+POST /game/_doc
+{
+  "name": "Temple Monkey Run 3D",
+  "size": "7.97M"
+}
+```
+
+
+若文档创建成功，Elasticsearch会返回元数据和一个 `201 Created`的 HTTP状态码：
+
+```
+{
+  "_index" : "game",
+  "_type" : "_doc",
+  "_id" : "cks0JHEB43V9Cn92sBxT",
+  "_version" : 1,
+  "result" : "created",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "_seq_no" : 0,
+  "_primary_term" : 1
+}
+```
+
+以下划线(`_`)开头的字段属于Elasticsearch元信息(meta data).
+
+- \_index 
+
+    索引名称，相当于mysql里面的数据库名称
+- \_type
+    
+    索引类型，相当于mysql里面的表名
+- \_id
+    
+    文档唯一ID。\_index,\_type,\_id唯一标识了系统里面的一个文档。在未定文档ID时候，Elasticsearch会自动生成文档ID。自动生成的 ID 是基于 Base64编码、URL-safe、且长度为20个字符的 GUID 字符串。 这些 GUID 字符串由可修改的 FlakeID 模式生成，这种模式允许多个节点并行生成唯一ID ，且互相之间的冲突概率几乎为零。
+
+- \_version
+
+  版本号，Elasticsearch使用版本号来进行并发控制
+
+- result
+    
+    操作结果，创建成功时created
+    
+
+
+**手动指定文档ID：**
+
+```
+PUT /game/_doc/2?op_type=create
+{
+  "name": "PUBG MOBILE LITE (Official)",
+  "size": "542.23M"
+}
+```
+
+或者
+
+```
+PUT /game/_doc/2/_create
+{
+  "name": "PUBG MOBILE LITE (Official)",
+  "size": "542.23M"
+}
+```
+
+若文档已存在，Elasticsearch将会返回`409 Conflict `状态码，以及如下的错误信息：
+
+```
+{
+  "error": {
+    "root_cause": [
+      {
+        "type": "version_conflict_engine_exception",
+        "reason": "[_doc][2]: version conflict, document already exists (current version [6])",
+        "index_uuid": "yUVNSMmXQhSgbdLspeS5ag",
+        "shard": "2",
+        "index": "game"
+      }
+    ],
+    "type": "version_conflict_engine_exception",
+    "reason": "[_doc][2]: version conflict, document already exists (current version [6])",
+    "index_uuid": "yUVNSMmXQhSgbdLspeS5ag",
+    "shard": "2",
+    "index": "game"
+  },
+  "status": 409
+}
+```
+
+### 索引文档(Index)
+
+此时Index为动词，是将文档写入到elasticsearch里面。在文档不存在的情况下，与指定文档ID创建文档操作本质一样。在文档以存在情况下，会更新文档信息(在内部，Elasticsearch 已将旧文档标记为已删除，并增加一个全新的文档。 ，但它并不会立即消失。当继续索引更多的数据，Elasticsearch会在后台清理这些已删除文档， 此操作也叫Index操作)，此时`_version`会加一，`result`是`updated`
+
+```
+POST /game/_doc/2
+{
+  "name": "PUBG MOBILE LITE (Official)",
+  "size": "542.23M"
+}
+```
+
+### 查看文档(Read)
+
+```
+GET /game/_doc/2
+```
+
+文档存在时候响应内容如下：
+
+```
+{
+  "_index" : "game",
+  "_type" : "_doc",
+  "_id" : "2",
+  "_version" : 5,
+  "_seq_no" : 4,
+  "_primary_term" : 1,
+  "found" : true,
+  "_source" : {
+    "name" : "PUBG MOBILE LITE (Official)",
+    "size" : "542.23M"
+  }
+}
+```
+
+- found
+    
+    值为true(找到指定文档)， false(未找到指定文档)
+
+- \_source
+
+    source字段返回文档所有内容
+ 
+ 若文档不存在，Elasticsearch会返回404 Not Found状态码, found值为false   
+
+### 文档更新(Update)
+
+```
+POST /game/_doc/2/_update
+{
+   "doc" : {
+      "name" : "PUBG MOBILE LITE",
+      "views": 100
+   }
+}
+```
+
+更改`name`字段值，新增一个`views`字段，此时候文档版本号`_version`会更新。
+
+若要更新全部文档则需要使用文档索引操作
+
+### 删除文档(Delete)
+
+```
+DELETE /game/_doc/2
+```
+
+若文档不存在，Elasticsearch会返回`404 Not Found`状态码, `result`是`not_found`：
+
+```
+{
+  "_index" : "game",
+  "_type" : "_doc",
+  "_id" : "4",
+  "_version" : 2,
+  "result" : "not_found",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "_seq_no" : 24,
+  "_primary_term" : 1
+}
+```
+
+即使文档不存在， _version 值仍然会增加。这是 Elasticsearch内部记录本的一部分，用来确保这些改变在跨多节点时以正确的顺序执行。
+
+### 批量操作(Batch)
+
+#### 批量取文档-mget
+
+文档在同一个索引内，可以把多个文档ID放入ids数组中批量查询
+
+```
+GET /game/_doc/_mget
+{
+   "ids" : [ "cks0JHEB43V9Cn92sBxT", "2" ]
+}
+```
+
+文档在多个索引中：
+
+```
+GET /_mget
+{
+   "docs" : [
+      {
+         "_index" : "game",
+         "_type" :  "_doc",
+         "_id" :    1
+      },
+      {
+         "_index" : "game",
+         "_type" :  "_doc",
+         "_id" :    2
+      }
+   ]
+}
+```
+
+#### Bulk操作
+
+通过Bulk API，我们可以一次性进行多种类型操作：
+
+- Index
+- Create
+- Update
+- Delte
+
+Bulk API 支持对不同的索引操作，单条操作成功或失败，不影响其他操作结果。返回结果包括了每一条操作的结果
+
+Bulk API请求体格式如下：
+
+```
+{ action: { metadata }}\n
+{ request body        }\n
+{ action: { metadata }}\n
+{ request body        }\n
+```
+
+`action/metadata`指定对哪个索引，哪个文档进行何种类型操作，操作类型只能是上面四种：
+
+```
+POST /_bulk
+{ "delete": { "_index": "website", "_type": "blog", "_id": "123" }} 
+{ "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "My first blog post" }
+{ "index":  { "_index": "website", "_type": "blog" }}
+{ "title":    "My second blog post" }
+{ "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
+{ "doc" : {"title" : "My updated blog post"} }
+```
+
+索引或者类型都一样的时候，我们可以在URL指定索引和类型，那么请求体中就不需要在指定索引和类型。若请求体中指定了，则会覆盖掉URL中的索引和类型
+
+```
+POST /website/_bulk
+{ "index": { "_type": "log" }}
+{ "event": "User logged in" }
+```
