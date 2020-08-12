@@ -1,7 +1,10 @@
 title: Golang设计模式系列之简单工厂模式
 author: tinker
-date: 2020-06-22 23:08:33
 tags:
+  - 设计模式
+categories:
+  - Golang设计模式系列
+date: 2020-06-22 23:08:00
 ---
 ## 定义
 
