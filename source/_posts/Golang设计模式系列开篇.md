@@ -85,7 +85,7 @@ date: 2020-05-23 18:04:00
 
 - Abstract Factory
 - Builder
-- Factory/Factory Method Pattern
+- [Factory/Factory Method Pattern](/2020/08/01/Golang设计模式系列之工厂方法模式/)
 - [Simple Factory Pattern/Static Factory Method](/2020/06/22/Golang设计模式系列之简单工厂模式/)
 - Object Pool
 - Prototype
@@ -118,7 +118,12 @@ date: 2020-05-23 18:04:00
 
 UML（Unified Modeling Language）是一种统一建模语言，为面向对象开发系统的产品进行说明、可视化、和编制文档的一种标准语言。
 
-在设计模式中，我们用UML中的类图来表示类的内部结构和类与类之间的关系。常见的有以下几种类的关系: 泛化（Generalization）,  实现（Realization），关联（Association)，聚合（Aggregation），组合(Composition)，依赖(Dependency)。类之间的关系强弱如下：
+在设计模式中，我们用UML中的类图来表示类的内部结构和类与类之间的关系。常见的有以下几种类的关系: 泛化（Generalization）,  实现（Realization），关联（Association)，聚合（Aggregation），组合(Composition)，依赖(Dependency)。
+
+![UML图之类之间关系](https://static.cyub.vip/images/202009/uml_class.png)
+
+
+类之间的关系强弱如下：
 
 > 泛化 = 实现 > 组合 > 聚合 > 关联 > 依赖
 

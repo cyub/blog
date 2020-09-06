@@ -258,7 +258,8 @@ func (c *cancelCtx) cancel(removeFromParent bool, err error) {
 	c.mu.Unlock()
 
 	if removeFromParent {
-    	// 将当前context从其父级context中移除掉，子代取消操作时候，removeFromParent一直都是false
+    	// 将当前context从其父级context中children map中移除掉，父级Context与该Context脱钩。
+    	// 这样当父级Context进行Cancel操作时候，不会再改Context进行取消操作了。因为再取消也没有意义了，因为该Context已经取消过了
 		removeChild(c.Context, c)
 	}
 }
@@ -471,7 +472,13 @@ func WithValue(parent Context, key, val interface{}) Context {
 
 ## 总结
 
-Context一共有4个类型实现了Context接口, 分别是`emptyCtx`,	`cancelCtx`,`timerCtx`,`valueCtx`。他们功能与创建方法如下：
+### 实现Context接口的类型
+
+Context一共有4个类型实现了Context接口, 分别是`emptyCtx`,	`cancelCtx`,`timerCtx`,`valueCtx`。
+
+![](https://static.cyub.vip/images/202009/context_implement.jpg)
+
+他们功能与创建方法如下：
 
 类型 | 创建方法 | 功能 |
 --- |----|---|
@@ -480,6 +487,16 @@ cancelCtx | WithCancel() | 可取消的context
 timerCtx | WithDeadline()/WithTimeout() | 可取消的context，过期或超时会自动取消
 valueCtx | WithValue() | 可存储共享信息的context
 
+### Context实现两种递归
+
+Context实现两种方向的递归操作。
+
+递归方向 | 目的
+---|---
+向下递归 | 当对父Context进去手动取消操作，或超时取消时候，向下递归处理对实现了canceler接口的后代进行取消操作
+向上队规 | 当对Context查询Key信息时候，若当前Context没有当前K-V信息时候，则向父辈递归查询，一直到查询到跟节点的emptyCtx，返回nil为止
+
+### Context使用规范
 使用Context的是应该准守以下原则来保证在不同包中使用时候的接口一致性，以及能让静态分析工具可以检查context的传播：
 
 1. 不要将Context作为结构体的一个字段存储，相反而应该显示传递Context给每一个需要它的函数，Context应该作为函数的第一个参数，并命名为ctx
@@ -487,11 +504,9 @@ valueCtx | WithValue() | 可存储共享信息的context
 3. context是并发安全的，相同的Context能够传递给运行在不同goroutine的函数
 
 
+
 ## 参考资料
 
 - [深入理解Golang之context](https://juejin.im/post/6844904070667321357)
 - [Go Concurrency Patterns: Context](https://blog.golang.org/context)
 - [Using Goroutines, Channels, Contexts, Timers, WaitGroups and Errgroups](https://medium.com/@ankur_a22/using-goroutines-channels-contexts-timers-waitgroups-and-errgroups-24b6062c1c93)
-
-
-
