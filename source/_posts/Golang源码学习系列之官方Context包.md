@@ -126,7 +126,11 @@ Context接口一共包含四个方法：
 
 ### 实现Context接口的类型
 
-Context一共有4个类型实现了Context接口, 分别是emptyCtx, cancelCtx,timerCtx,valueCtx。每个类型都关联的创建方法。
+Context一共有4个类型实现了Context接口, 分别是emptyCtx, cancelCtx,timerCtx,valueCtx。每个类型都关联一个创建方法。
+
+![](https://static.cyub.vip/images/202009/context_implement.jpg)
+
+
 
 #### emptyCtx
 
@@ -476,9 +480,7 @@ func WithValue(parent Context, key, val interface{}) Context {
 
 Context一共有4个类型实现了Context接口, 分别是`emptyCtx`,	`cancelCtx`,`timerCtx`,`valueCtx`。
 
-![](https://static.cyub.vip/images/202009/context_implement.jpg)
-
-他们功能与创建方法如下：
+它们的功能与创建方法如下：
 
 类型 | 创建方法 | 功能 |
 --- |----|---|
