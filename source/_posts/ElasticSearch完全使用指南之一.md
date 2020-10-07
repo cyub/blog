@@ -1,8 +1,9 @@
 title: ElasticSearch完全使用指南（一）
 author: tinker
 tags:
-  - ElasticSearch
-categories: []
+  - 完全指南
+categories:
+  - Elasticsearch
 date: 2020-03-22 21:46:00
 ---
 ![ElasticSearch完全使用指南](https://static.cyub.vip/images/202005/es-logo.png)

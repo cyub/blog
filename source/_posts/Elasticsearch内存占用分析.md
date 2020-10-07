@@ -1,4 +1,4 @@
-title: Elasticsearch内存占用分析
+title: Elasticsearch内存占用分析与管理
 author: tinker
 tags:
   - Elasticsearch内存占用
@@ -6,20 +6,17 @@ categories:
   - Elasticsearch
 date: 2020-09-25 19:21:00
 ---
-## 堆内存与堆外内存
+Elasticsearch是基于JVM实现的，内存分配分为堆内和堆外两部分。每部分的内存，可以用不同目的的缓存。
+
+![](https://static.cyub.vip/images/202010/es_memory.jpg)
+
+### 堆内存与堆外内存
 
 一般情况下，Java中分配的非空对象都是由Java虚拟机的垃圾收集器管理的，称为**堆内内存（on-heap memory）**。虚拟机会定期对垃圾内存进行回收，在某些特定的时间点，它会进行一次彻底的回收（full gc）。彻底回收时，垃圾收集器会对所有分配的堆内内存进行完整的扫描，这意味着一个重要的事实——这样一次垃圾收集对Java应用造成的影响，跟堆的大小是成正比的。过大的堆会影响Java应用的性能。
-
 
 Java虚拟机的堆以外的内存，即直接收操作系统管理的内存属于**堆外内存（off-heap memory）**，通过把内存对象分配在堆外内存中，可以保持一个较小的堆，可以减少垃圾回收对应用的影响。
 
 <!--more-->
-
-## Elasticsearch中的内存
-
-ES是基于JVM实现的，内存分配也分为堆内和堆外两部分。每部分的内存，可以用不同目的的缓存。
-
-![](https://static.cyub.vip/images/202010/es_memory.jpg)
 
 ### ES堆内存
 
@@ -168,5 +165,5 @@ POST /my-index/_cache/clear?request=true
 
 - [Nodes stats API](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html)
 - [Clear cache API](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-clearcache.html)
-- [cat nodes API](https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-nodes.html)
+- [Cat nodes API](https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-nodes.html)
 - [Configuring Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html#static-cluster-setting)

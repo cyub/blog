@@ -13,7 +13,7 @@ date: 2018-12-31 11:57:00
 
 ## 安装jupyter notebook
 
-推荐python3环境下安装jupyter。我系统是`Ubuntu 18.04 x64`里面内置了python3，所以直接安装jupyter，如果系统python版本是python2，可以使用`virtualenvwrapper`进行多版本python管理。
+推荐python3环境下安装jupyter。我系统是`Ubuntu 18.04`里面内置了python3，所以直接安装jupyter，如果系统python版本是python2.7，可以使用`virtualenvwrapper`进行多版本python管理。
 
 下面使用pip来安装jupyter notebook
 
@@ -27,6 +27,8 @@ sudo pip3 install jupyter // 安装jupyter
 
 ## 配置jupyter notebook
 
+### 生成配置文件
+
 下面命令将在`~/.jupyter`目录下面生成`jupyter notebook`配置文件`jupyter_notebook_config.py`
 
 ```js
@@ -38,8 +40,10 @@ sudo jupyter notebook --generate-config
 ```js
 c.NotebookApp.ip = 'localhost' // jupyter监控地址
 c.NotebookApp.port = 8888 // jupyter监听端口
-c.NotebookApp.allow_remote_access = True // 运行以主机名称的形式访问
+c.NotebookApp.allow_remote_access = True // 运行以非localhost/127.0.0.1访问
 ```
+
+### 配置登录密码
 
 jupyter启动服务时候，默认是使用一次性token进行登录验证的。我们需要使用以下命令来给jupyter服务配置登录密码：
 
@@ -65,6 +69,8 @@ Verify password:
 c.NotebookApp.password = u'sha1:5952f1c3c7ec:16852a1f8ee36f7cb716b74d3e0127efee106c1c'
 ```
 
+### 启动服务并验证
+
 配置完成之后我们可以使用`jupyter notebook`来启动服务
 
 ```js
@@ -72,13 +78,13 @@ cd /home/vagrant/jupyter // 假定jupyter工作目录在~/jupyter
 jupyter notebook
 ```
 
-由于jupyter是在远程服务器上面启动，监听的是127.0.0.1地址，外面无法访问，这时候我们可以使用ssh本地转发功能，将远程内网服务转发至本地端口。下面我们在本地执行以下命令(若window下面没有此命令，可使用xshell)：
+由于jupyter是在远程服务器上面启动，监听的是127.0.0.1地址，外面无法访问，这时候我们可以使用ssh本地转发功能，将远程内网服务转发至本地端口。下面我们在本地执行以下命令(若window下面没有ssh命令，可使用xshell)：
 
 ```js
 ssh -N -f -L 9999:localhost:8888 remote_user@remote_host
 ```
 
-其中-N表示仅仅做端口转发，不执行任何命令。-f表示在后台运行。-L表示本地转发，其选项值代表ssh客户端和服务端转发的端口，9999为本地监听端口， localhost和8888为远程jupyter服务地址和端口。remote_user@remote_host代表远程主机用户和地址。
+其中-N表示仅做端口转发，不执行任何命令。-f表示在后台运行。-L表示本地转发，其选项值代表ssh客户端和服务端转发的端口，9999为本地监听端口， localhost和8888为远程jupyter服务地址和端口。remote_user@remote_host代表远程主机用户和地址。
 
 完成上面操作，打开浏览器，地址栏输入`localhost:9999`，即访问的是远程的jupyter。
 
@@ -112,7 +118,7 @@ stderr_logfile=/var/log/supervisor/jupyter.err.log
 
 ```js
 sudo supervisorctl reread // 重新读取配置
-sudo supervisorctl update // 更新新的配置到supervisord
+sudo supervisorctl update // 使用新配置启动程序
 ```
 
 使用下面命令来查看jupyter状态
@@ -162,9 +168,4 @@ sudo nginx -s reload // 重新加载配置到nginx
 - [Deploying Jupyter in Ubuntu with Nginx and Supervisor](http://www.albertauyeung.com/post/setup-jupyter-nginx-supervisor/)
 - [Jupyter官方文档之Running a notebook server](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html)
 - [实战 SSH 端口转发](https://www.ibm.com/developerworks/cn/linux/l-cn-sshforward/index.html)
-
-
-
-
-
-
+- [Jupyter Lab: Evolution of the Jupyter Notebook](https://towardsdatascience.com/jupyter-lab-evolution-of-the-jupyter-notebook-5297cacde6b)
