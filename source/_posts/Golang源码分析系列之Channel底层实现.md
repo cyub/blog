@@ -258,7 +258,7 @@ func send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
 			if c.recvx == c.dataqsiz { // 队列数组中最后一个元素已读取，则再次从头开始读取
 				c.recvx = 0
 			}
-			c.sendx = c.recvx // c.sendx = (c.sendx+1) % c.dataqsiz
+			c.sendx = c.recvx
 		}
 	}
 	if sg.elem != nil { // 复制数据到sg中
@@ -409,13 +409,12 @@ func recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
 		if ep != nil {
 			typedmemmove(c.elemtype, ep, qp)
 		}
-		// copy data from sender to queue
 		typedmemmove(c.elemtype, qp, sg.elem)
 		c.recvx++
 		if c.recvx == c.dataqsiz {
 			c.recvx = 0
 		}
-		c.sendx = c.recvx // c.sendx = (c.sendx+1) % c.dataqsiz
+		c.sendx = c.recvx
 	}
 	sg.elem = nil
 	gp := sg.g
@@ -501,10 +500,10 @@ func closechan(c *hchan) {
 |  操作  | 空Channel | 已关闭Channel | 活跃Channel |
 |  ----  | ----  | --- | --- |
 | close(ch)  | panic | panic | 成功关闭 |
-| ch <-v  | 阻塞 | panic | 成功发送或阻塞 |
-| v,ok = <-ch | 阻塞 | 不阻塞 | 成功接收或阻塞 |
+| ch <-v  | 永远阻塞 | panic | 成功发送或阻塞 |
+| v,ok = <-ch | 永远阻塞 | 不阻塞 | 成功接收或阻塞 |
 
-**注意：**从空通道中写入或读取数据会一直阻塞，有可能造成goroutine泄漏。
+**注意：**从空通道中写入或读取数据会永远阻塞，这会造成goroutine泄漏。
 
 
 2. 发送、接收数据以及关闭通道流程图：

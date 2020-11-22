@@ -1,16 +1,16 @@
-title: Golang源码学习系列之官方Context包
+title: Golang源码分析系列之官方Context包
 author: tinker
 tags:
   - context
 categories:
-  - Golang源码学习系列
+  - Golang源码分析系列
 date: 2020-08-22 21:48:00
 ---
 ## Context简介
 
 Context是由Golang官方开发的并发控制包，一方面可以用于当请求超时或者取消时候，相关的goroutine马上退出释放资源，另一方面Context本身含义就是上下文，其可以在多个goroutine或者多个处理函数之间传递共享的信息。
 
-创建一个新的context，必须基于一个父context，新的context又可以作为其他context的父context。所有context在一起构造一个context树。
+创建一个新的context，必须基于一个父context，新的context又可以作为其他context的父context。所有context在一起构造成一个context树。
 
 ![context tree](https://static.cyub.vip/images/202008/context-tree.jpg)
 
