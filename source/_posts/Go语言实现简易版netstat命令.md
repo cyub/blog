@@ -59,7 +59,7 @@ nc-l8090
 
 ## /proc/net/tcp文件格式
 
-`/proc/net/tcp`文件首先会列出所有监听状态的TCP套接字，然后列出所有已建立的TCP套接字。我们通过`head -n 5 /proc/net/tcp`命令查看该文件最后五行：
+`/proc/net/tcp`文件首先会列出所有监听状态的TCP套接字，然后列出所有已建立的TCP套接字。我们通过`head -n 5 /proc/net/tcp`命令查看该文件头五行：
 
 ```
 sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
@@ -110,9 +110,9 @@ enum {
 00000150:00000000 01:00000019 00000000  
       |        |     |     |       |--> number of unrecovered RTO timeouts
       |        |     |     |----------> number of jiffies until timer expires
-      |        |     |----------------> timer_active,具体值见下面说明
-      |        |----------------------> receive-queue(当状态是ESTABLISHED，表示接收队列中数据长度；状态是LISTEN，表示已经完成连接队列的长度)
-      |-------------------------------> transmit-queue(发送队列中数据长度)
+      |        |     |----------------> timer_active，具体值见下面说明
+      |        |----------------------> receive-queue，当状态是ESTABLISHED，表示接收队列中数据长度；状态是LISTEN，表示已经完成连接队列的长度
+      |-------------------------------> transmit-queue，发送队列中数据长度
 ```
 
 timer_active所有值与说明如下:
@@ -145,8 +145,12 @@ timer_active所有值与说明如下:
 
 ## Go实现简易版本netstat命令
 
-netstat工作原理和`/proc/net/tcp`文件结构，我们都已经了解了，现在可以使用据此，使用Go实现一个简单版本的netstat命令：
+netstat工作原理和`/proc/net/tcp`文件结构，我们都已经了解了，现在可以使用据此使用Go实现一个简单版本的netstat命令。
 
+![](https://static.cyub.vip/images/202012/go-netstat.jpg)
+
+
+核心代码如下，完整代码参加[go-netstat](https://github.com/cyub/code-examples/tree/master/go/go-netstat)：
 ```go
 // 状态码值
 const (
@@ -161,39 +165,39 @@ const (
 	TCP_LAST_ACK
 	TCP_LISTEN
 	TCP_CLOSING
-	TCP_NEW_SYN_RECV
-	TCP_MAX_STATES
+	//TCP_NEW_SYN_RECV
+	//TCP_MAX_STATES
 )
 
 // 状态码
 var states = map[int]string{
-	TCP_ESTABLISHED:  "ESTABLISHED",
-	TCP_SYN_SENT:     "SYN_SENT",
-	TCP_SYN_RECV:     "SYN_RECV",
-	TCP_FIN_WAIT1:    "FIN_WAIT1",
-	TCP_FIN_WAIT2:    "FIN_WAIT2",
-	TCP_TIME_WAIT:    "TIME_WAIT",
-	TCP_CLOSE:        "CLOSE",
-	TCP_CLOSE_WAIT:   "CLOSE_WAIT",
-	TCP_LAST_ACK:     "LAST_ACK",
-	TCP_LISTEN:       "LISTEN",
-	TCP_CLOSING:      "CLOSING",
-	TCP_NEW_SYN_RECV: "NEW_SYN_RECV",
-	TCP_MAX_STATES:   "MAX_STATES",
+	TCP_ESTABLISHED: "ESTABLISHED",
+	TCP_SYN_SENT:    "SYN_SENT",
+	TCP_SYN_RECV:    "SYN_RECV",
+	TCP_FIN_WAIT1:   "FIN_WAIT1",
+	TCP_FIN_WAIT2:   "FIN_WAIT2",
+	TCP_TIME_WAIT:   "TIME_WAIT",
+	TCP_CLOSE:       "CLOSE",
+	TCP_CLOSE_WAIT:  "CLOSE_WAIT",
+	TCP_LAST_ACK:    "LAST_ACK",
+	TCP_LISTEN:      "LISTEN",
+	TCP_CLOSING:     "CLOSING",
+	//TCP_NEW_SYN_RECV: "NEW_SYN_RECV",
+	//TCP_MAX_STATES:   "MAX_STATES",
 }
 
 // socketEntry结构体，用来存储/proc/net/tcp每一行解析后数据信息
 type socketEntry struct {
 	id      int
-	srcIP   string
-	srcPort uint16
-	dstIP   string
-	dstPort uint16
+	srcIP   net.IP
+	srcPort int
+	dstIP   net.IP
+	dstPort int
 	state   string
 
-	txQueue       uint
-	rxQueue       uint
-	timer         uint8
+	txQueue       int
+	rxQueue       int
+	timer         int8
 	timerDuration time.Duration
 	rto           time.Duration // retransmission timeout
 	uid           int
@@ -220,38 +224,53 @@ func parseRawSocketEntry(entry string) (*socketEntry, error) {
 	}
 	se.id = id                                     // sockect entry id
 	localAddr := strings.Split(entryItems[1], ":") // 本地ip
-	se.srcIP = humanReadableIP(localAddr[0])
-	port, _ := strconv.ParseInt(localAddr[1], 16, 32)
-	se.srcPort = uint16(port)
+	se.srcIP = parseHexBigEndianIPStr(localAddr[0])
+	port, err := strconv.ParseInt(localAddr[1], 16, 32) // 本地port
+	if err != nil {
+		return nil, err
+	}
+	se.srcPort = int(port)
 
 	remoteAddr := strings.Split(entryItems[2], ":") // 远程ip
-	se.dstIP = humanReadableIP(remoteAddr[0])
-	port, _ = strconv.ParseInt(remoteAddr[1], 16, 32)
-	se.dstPort = uint16(port)
+	se.dstIP = parseHexBigEndianIPStr(remoteAddr[0])
+	port, err = strconv.ParseInt(remoteAddr[1], 16, 32) // 远程port
+	if err != nil {
+		return nil, err
+	}
+	se.dstPort = int(port)
 
 	state, _ := strconv.ParseInt(entryItems[3], 16, 32) // socket 状态
 	se.state = states[int(state)]
 
 	tcpQueue := strings.Split(entryItems[4], ":")
-	tQueue, _ := strconv.ParseInt(tcpQueue[0], 16, 32) // 发送队列数据长度
-	sQueue, _ := strconv.ParseInt(tcpQueue[1], 16, 32) // 接收队列数据长度
-	se.txQueue = uint(tQueue)
-	se.rxQueue = uint(sQueue)
+	tQueue, err := strconv.ParseInt(tcpQueue[0], 16, 32) // 发送队列数据长度
+	if err != nil {
+		return nil, err
+	}
+	se.txQueue = int(tQueue)
+	sQueue, err := strconv.ParseInt(tcpQueue[1], 16, 32) // 接收队列数据长度
+	if err != nil {
+		return nil, err
+	}
+	se.rxQueue = int(sQueue)
 
-	se.uid, _ = strconv.Atoi(entryItems[7]) // 套接字所属用户uid
-	se.uname = users[entryItems[7]]         // 套接字所属用户名称
-	se.inode = entryItems[9]                // 套接字的inode
+	se.uid, err = strconv.Atoi(entryItems[7]) // socket uid
+	if err != nil {
+		return nil, err
+	}
+	se.uname = systemUsers[entryItems[7]] // socket user name
+	se.inode = entryItems[9]              // socket inode
 	return se, nil
 }
 
-// 大端法16进制字符串表示的IP，转换成点分十进制表示
-func humanReadableIP(data string) string {
-	b := []byte(data)
-	for i, j := 1, len(b)-2; i < j; i, j = i+2, j-2 {
+// hexIP是网络字节序/大端法转换成的16进制的字符串
+func parseHexBigEndianIPStr(hexIP string) net.IP {
+	b := []byte(hexIP)
+	for i, j := 1, len(b)-2; i < j; i, j = i+2, j-2 { // 反转字节，转换成小端法
 		b[i], b[i-1], b[j], b[j+1] = b[j+1], b[j], b[i-1], b[i]
 	}
-	long, _ := strconv.ParseInt(string(b), 16, 64)
-	return fmt.Sprintf("%d.%d.%d.%d", uint8(long>>24), uint8(long>>16), uint8(long>>8), uint8(long))
+	l, _ := strconv.ParseInt(string(b), 16, 64)
+	return net.IPv4(byte(l>>24), byte(l>>16), byte(l>>8), byte(l))
 }
 ```
 
