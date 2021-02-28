@@ -51,7 +51,7 @@ type sudog struct {
 	next     *sudog
 	prev     *sudog
 	elem     unsafe.Pointer
-    ...
+	...
 }
 ```
 
@@ -92,8 +92,8 @@ func makechan(t *chantype, size int) *hchan {
 	if elem.size >= 1<<16 {
 		throw("makechan: invalid channel element type")
 	}
-    
-    // hchanSize大小不是maxAlign倍数，或者通道数据元素的对齐保证大于maxAlign
+
+	// hchanSize大小不是maxAlign倍数，或者通道数据元素的对齐保证大于maxAlign
 	if hchanSize%maxAlign != 0 || elem.align > maxAlign {
 		throw("makechan: bad alignment")
 	}
@@ -109,9 +109,9 @@ func makechan(t *chantype, size int) *hchan {
 		c = (*hchan)(mallocgc(hchanSize, nil, true))
 		c.buf = c.raceaddr()
 	case elem.ptrdata == 0: 
-    	// 当通道数据元素不含指针，hchan和buf内存空间调用mallocgc一次性分配完成
+		// 当通道数据元素不含指针，hchan和buf内存空间调用mallocgc一次性分配完成
 		c = (*hchan)(mallocgc(hchanSize+mem, nil, true))
-        // hchan和buf内存上布局是紧挨着的
+		// hchan和buf内存上布局是紧挨着的
 		c.buf = add(unsafe.Pointer(c), hchanSize)
 	default:
 		// 当通道数据元素含指针时候，先创建hchan，然后给buf分配内存空间
@@ -134,11 +134,11 @@ func makechan(t *chantype, size int) *hchan {
 func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 	// 当通道为nil时候
 	if c == nil {
-    	// 非阻塞模式下，直接返回false
+		// 非阻塞模式下，直接返回false
 		if !block {
 			return false
 		}
-        // 调用gopark将当前Goroutine休眠，调用gopark时候，将传入unlockf设置为nil，当前Goroutine会一直休眠
+		// 调用gopark将当前Goroutine休眠，调用gopark时候，将传入unlockf设置为nil，当前Goroutine会一直休眠
 		gopark(nil, nil, waitReasonChanSendNilChan, traceEvGoStop, 2)
 		throw("unreachable")
 	}
@@ -171,21 +171,21 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 		panic(plainError("send on closed channel"))
 	}
 	
-    // 从接收者队列recvq中取出一个接收者，接收者不为空情况下，直接将数据传递给该接收者
+	// 从接收者队列recvq中取出一个接收者，接收者不为空情况下，直接将数据传递给该接收者
 	if sg := c.recvq.dequeue(); sg != nil {
 		send(c, sg, ep, func() { unlock(&c.lock) }, 3)
 		return true
 	}
 
 	// 缓冲队列中的元素个数小于队列的大小
-    // 说明缓冲队列还有空间
+	// 说明缓冲队列还有空间
 	if c.qcount < c.dataqsiz {
 		qp := chanbuf(c, c.sendx) // qp指向循环数组中未使用的位置
 		if raceenabled {
 			raceacquire(qp)
 			racerelease(qp)
 		}
-        // 将发送的数据写入到qp指向的循环数组中的位置
+		// 将发送的数据写入到qp指向的循环数组中的位置
 		typedmemmove(c.elemtype, qp, ep)
 		c.sendx++ // 将send加一，相当于循环队列的front指针向前进1
 		if c.sendx == c.dataqsiz { //当循环队列最后一个元素已使用，此时循环队列将再次从0开始
@@ -216,7 +216,7 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 	gp.param = nil
 	c.sendq.enqueue(mysg) // 将当前发送者入队sendq中
 	goparkunlock(&c.lock, waitReasonChanSend, traceEvGoBlockSend, 3) // 将当前goroutine放入waiting状态，并释放c.lock锁
-    
+
 	// Ensure the value being sent is kept alive until the
 	// receiver copies it out. The sudog has a pointer to the
 	// stack object, but sudogs aren't considered as roots of the
@@ -246,7 +246,7 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 func send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
 	if raceenabled {
 		if c.dataqsiz == 0 {
-        	// 无缓冲通道
+			// 无缓冲通道
 			racesync(c, sg)
 		} else {
 			qp := chanbuf(c, c.recvx)
@@ -291,9 +291,9 @@ func typedmemmove(typ *_type, dst, src unsafe.Pointer) {
 	if dst == src {
 		return
 	}
-    ...
+	...
 	memmove(dst, src, typ.size)
-    ...
+	...
 }
 ```
 
@@ -306,7 +306,7 @@ func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 		if !block { // 当非阻塞模式直接返回
 			return
 		}
-        // 一直阻塞
+		// 一直阻塞
 		gopark(nil, nil, waitReasonChanReceiveNilChan, traceEvGoStop, 2)
 		throw("unreachable")
 	}
@@ -332,17 +332,17 @@ func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 
 	// 缓冲队列中有数据情况下，从缓存队列取出数据，传递给接收者
 	if c.qcount > 0 {
-        // qp指向循环队列数组中元素
+		// qp指向循环队列数组中元素
 		qp := chanbuf(c, c.recvx)
 		if raceenabled {
 			raceacquire(qp)
 			racerelease(qp)
 		}
 		if ep != nil {
-            // 直接qp指向的数据复制到ep指向的地址
+			// 直接qp指向的数据复制到ep指向的地址
 			typedmemmove(c.elemtype, ep, qp)
 		}
-        // 清空qp指向内存的数据
+		// 清空qp指向内存的数据
 		typedmemclr(c.elemtype, qp)
 		c.recvx++ // 相当于循环队列中的rear加1
 		if c.recvx == c.dataqsiz { // 队列最后一个元素已读取出来，recvx指向0
@@ -357,14 +357,14 @@ func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 		unlock(&c.lock)
 		return false, false
 	}
-    
+
 	gp := getg()
 	mysg := acquireSudog()
 	mysg.releasetime = 0
 	if t0 != 0 {
 		mysg.releasetime = -1
 	}
-    
+
 	mysg.elem = ep
 	mysg.waitlink = nil
 	gp.waiting = mysg
@@ -437,15 +437,15 @@ func closechan(c *hchan) {
 	}
 	// 加锁
 	lock(&c.lock)
-    // 通道已关闭，再次关闭直接恐慌
+	// 通道已关闭，再次关闭直接恐慌
 	if c.closed != 0 {
 		unlock(&c.lock)
 		panic(plainError("close of closed channel"))
 	}
-    ...
+	...
 	c.closed = 1 // 关闭标志closed置为1
 	var glist gList
-    // 将接收者添加到glist中
+	// 将接收者添加到glist中
 	for {
 		sg := c.recvq.dequeue()
 		if sg == nil {
@@ -503,7 +503,7 @@ func closechan(c *hchan) {
 | ch <-v  | 永远阻塞 | panic | 成功发送或阻塞 |
 | v,ok = <-ch | 永远阻塞 | 不阻塞 | 成功接收或阻塞 |
 
-**注意：**从空通道中写入或读取数据会永远阻塞，这会造成goroutine泄漏。
+**注意：** 从空通道中写入或读取数据会永远阻塞，这会造成goroutine泄漏。
 
 
 2. 发送、接收数据以及关闭通道流程图：
