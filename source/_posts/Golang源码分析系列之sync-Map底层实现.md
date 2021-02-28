@@ -23,6 +23,7 @@ type Map struct {
 }
 ```
 
+<!--more-->
 
 sync.Map结构体中read字段是`atomic.Value`类型，底层是**readOnly结构体**：
 

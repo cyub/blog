@@ -198,5 +198,20 @@ docker-composer.yml文件:
 sudo chown -R 472:472 $PWD/data/grafana
 ```
 
+## docker容器内外相互拷贝数据
+
+从宿主机上拷贝文件或目录到容器内:
+
+```
+docker cp 文件 容器名:目录
+docker cp 目录 容器名:目录
+```
+
+从容器内拷贝文件或目录到宿主机上:
+
+```
+docker cp 容器名:文件 目录
+docker cp 容器名:目录 目录
+```
 
 附：[Nodejs应用dockerize最佳时间](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#global-npm-dependencies)
