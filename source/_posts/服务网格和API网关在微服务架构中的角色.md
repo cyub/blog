@@ -1,8 +1,8 @@
-title: 服务网格和API网关在微服务架构中的作用
+title: 服务网格和API网关在微服务架构中的角色
 author: tinker
 tags:
   - 服务网格
-  - API网格
+  - API网关
   - 东西流量
   - 南北流量
 categories:
