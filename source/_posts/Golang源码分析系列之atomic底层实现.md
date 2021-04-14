@@ -11,13 +11,9 @@ date: 2021-04-05 11:30:00
 
 atomic是Go内置原子操作包。下面是官方说明：
 
-> Package atomic provides low-level atomic memory primitives useful for implementing synchronization algorithms.
+> Package atomic provides low-level atomic memory primitives useful for implementing synchronization algorithms. atomic包提供了用于实现同步机制的底层原子内存原语。
 
-atomic包提供了用于实现同步机制的底层原子内存原语。
-
-> These functions require great care to be used correctly. Except for special, low-level applications, synchronization is better done with channels or the facilities of the sync package. Share memory by communicating; don't communicate by sharing memory
-
-使用这些功能需要非常小心。除了特殊的底层应用程序外，最好使用通道或sync包来进行同步。**通过通信来共享内存；不要通过共享内存来通信**。
+> These functions require great care to be used correctly. Except for special, low-level applications, synchronization is better done with channels or the facilities of the sync package. Share memory by communicating; don't communicate by sharing memory. 使用这些功能需要非常小心。除了特殊的底层应用程序外，最好使用通道或sync包来进行同步。**通过通信来共享内存；不要通过共享内存来通信**。
 
 <!--more-->
 
