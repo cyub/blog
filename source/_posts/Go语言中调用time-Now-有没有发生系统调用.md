@@ -173,7 +173,7 @@ AT_SYSINFO_EHDR:      0x7fff3d725000
 ![](https://static.cyub.vip/images/202109/gdb-dump-memory.png)
 
 
-第二种方式是自己编写代码实现。
+第二种方式是自己编写代码实现，[点击查看完整源码](https://github.com/cyub/code-examples/tree/master/go/vdso-dump)。
 
 ```go
 	outputFile, err := os.Create(*output)
