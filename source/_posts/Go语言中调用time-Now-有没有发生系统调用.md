@@ -282,5 +282,5 @@ func vdsoauxv(tag, val uintptr) {
 - [Sysenter Based System Call Mechanism in Linux 2.6](http://articles.manugarg.com/systemcallinlinux2_6.html)
 - [Linux syscall, vsyscall, and vDSO... Oh My! ](http://davisdoesdownunder.blogspot.com/2011/02/linux-syscall-vsyscall-and-vdso-oh-my.html)
 - [About ELF Auxiliary Vectors](http://articles.manugarg.com/aboutelfauxiliaryvectors.html)
-- [Atp's external memory
-linux syscalls on x86_64](http://blog.tinola.com/?e=5)
+- [linux syscalls on x86_64](http://blog.tinola.com/?e=5)
+- [Linux的虚拟系统调用加速](http://readm.tech/2016/09/23/syscall/)
