@@ -12,11 +12,14 @@ date: 2021-11-09 17:23:00
 
 此外调用方(grpc client)会维持grpc长连接，以及grpc底层使用http/2协议，负载均衡不同与http和tcp，这一点在设计方案时候，也需要特别关注。
 
+<!--more-->
+
 ## k8s service直连
 
 [K8s service](https://kubernetes.io/docs/concepts/services-networking/service/)是一个命名负载均衡器，它可以将流量代理到一个或多个Pod。grpc-go可以通过拨号直连到service，让service进行服务发现和负载均衡处理。
 
 ![](https://static.cyub.vip/images/202111/passthrough-service.png)
+
 
 k8s service直连方案部署和开发简单，Pod扩容和缩容都可以及时感知。但是由于service负载均衡工作在4层，无法识别7层的http/2协议，会导致负载均衡不均匀的问题。
 
