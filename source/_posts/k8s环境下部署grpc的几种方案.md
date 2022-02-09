@@ -6,21 +6,22 @@ tags:
 categories: []
 date: 2021-11-09 17:23:00
 ---
+# k8s环境下部署grpc方案
+
 笔者前段时间负责所在广告部门的ssp系统核心的几个grpc服务由虚拟机部署迁移到k8s环境下的技术方案设计与实施。本篇博文就专门介绍下k8s环境的部署grpc几个方案。这里面不涉及具体实施细节。我们k8s环境是采用华为云的k8s集群服务，我们ssp系统都是go语言开发的，这里面的grpc专指grpc-go。
 
 容器是微服务的基石，可以做到每个服务快速autoscale，但随之带来的是服务的消亡是任意不定的，服务如何能够被调用方找到的难题。为了解决这个问题，就需要系统支持服务的注册和服务的发现。对于grpc来说，就是服务提供者grpc server会部署到多个k8s的Pod上，Pod的创建和消亡是任意时刻，不可预测，那就需要有一套机制能够发现grpc server所有Pod的端点信息，保证调用方(grpc client)能够及时准确获取服务提供方信息。所以grpc部署在k8s的方案也必要解决服务的注册和服务的发现。
 
 此外调用方(grpc client)会维持grpc长连接，以及grpc底层使用HTTP/2协议，负载均衡不同与http和tcp，这一点在设计方案时候，也需要特别关注。
 
-<!--more-->
-
 ## k8s service直连
 
-[K8s service](https://kubernetes.io/docs/concepts/services-networking/service/)是一个命名负载均衡器，它可以将流量代理到一个或多个Pod。grpc-go可以通过拨号直连到service，让service进行服务发现和负载均衡处理。
+[K8s service](https://kubernetes.io/docs/concepts/services-networking/service/)是一个命名负载均衡器，它可以将流量代理到一个或多个Pod（这里面的service指的是`ClusterIP`类型的service)。grpc-go可以通过拨号直连到service，让service进行服务发现和负载均衡处理。
 
 ![](https://static.cyub.vip/images/202111/passthrough-service.png)
 
 k8s service直连方案部署和开发简单，Pod扩容和缩容都可以及时感知。但是由于service负载均衡工作在4层，无法识别7层的HTTP/2协议，会导致负载均衡不均匀的问题。
+<!--more-->
 
 为什么常规的4层负载均衡器无法对7层的HTTP/2协议进行负载均衡?
 
@@ -29,6 +30,8 @@ k8s service直连方案部署和开发简单，Pod扩容和缩容都可以及时
 > an L4 load balancer, attempting to load balance HTTP/2 traffic, will 
 > open a single TCP connection and route all successive traffic to that 
 > same long-lived connection, in effect cancelling out the load balancing.
+
+上面架构图中说明：svc A是grpc client应用，svc B是grpc server应用，svc A作为服务调用方会调用svc B的服务，图中只画出svc A的一个Pod调用svc B的服务的流程，其他Pod略去。
 
 ## k8s headless service
 
@@ -100,9 +103,11 @@ env:
 
 ## k8s endpoints
 
-k8s提供了Endpoints API可以查询service下面的所有Pod信息。k8s Endpoints底层使用etcd存储的，当Pod创建时候，会将信息写入到Endpoints中，当Pod消亡时候会将其摘掉。该方案同etcd外部方案类似，只不过其服务端点信息是从k8s集群中查询，避免维护etcd集群。
+k8s提供了[Endpoints API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#read-endpoints-v1-core)可以查询service下面的所有Pod信息。k8s Endpoints底层使用etcd存储的，当Pod创建时候，会将信息写入到Endpoints中，当Pod消亡时候会将其摘掉。该方案同etcd外部方案类似，只不过其服务端点信息是从k8s集群中查询，避免维护etcd集群。我们可以使用[sercand/kuberesolver](https://github.com/sercand/kuberesolver)这个包，或者使用[go-zero](https://github.com/zeromicro/go-zero/tree/master/zrpc/resolver/internal/kube)框架，其里面内置k8s endpoints解析处理。
 
-![](https://static.cyub.vip/images/202111/k8s-endponts-service.png)
+![](https://static.cyub.vip/images/202111/k8s-endpoints-service.png)
+
+该方案需要我们在部署k8s时候，创建具有读取特定命名空间endpoints的service Account,并在Deployment配置文件指定该server Account。k8s部署可以参考[k8s endpoints API 模式](https://github.com/cyub/grpc-examples/tree/main/lb#k8s-endpoints-api-%E6%A8%A1%E5%BC%8F)。
 
 ## Envoy proxy
 
@@ -124,7 +129,7 @@ Envoy 是一款由 Lyft 开源的 L7 代理和通信总线，是 CNCF 旗下的�
 
 ## Service Mesh
 
-服务网格（Service Mesh)跟上面的`Envoy proxy as sidecar`有点类似，在Service Mesh下，svc A和svc B 中所有Pod中都会有一个流量代理组件作为sidecar,它们构成了data pane，所有流入(ingress)/流出(egress)的流量都会经过sidecar。市场上常见的实现了Service Mesh的工具是istio和linkered。本方案采用istio实现service mesh。具体k8s部署可以参考[service mesh 模式](https://github.com/cyub/grpc-examples/tree/main/lb#service-mesh-%E6%A8%A1%E5%BC%8F)。
+服务网格（Service Mesh)跟上面的`Envoy proxy as sidecar`有点类似，在Service Mesh下，svc A和svc B 中所有Pod中都会有一个流量代理组件作为sidecar,它们构成了data plane，所有流入(ingress)/流出(egress)的流量都会经过sidecar。市场上常见的实现了Service Mesh的工具是istio和linkered。本方案采用istio实现service mesh。具体k8s部署可以参考[service mesh 模式](https://github.com/cyub/grpc-examples/tree/main/lb#service-mesh-%E6%A8%A1%E5%BC%8F)。
 
 ![](https://static.cyub.vip/images/202111/service-mesh-grpc.png)
 
