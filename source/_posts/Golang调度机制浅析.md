@@ -211,7 +211,7 @@ Golang在底层实现了混合型线程模型。下图中M代表着系统线程�
 
 ## GMP模型
 
-[G](https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L407-L506)，[M](https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L519-L601)，[P](https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L603-L759)分别是Go runtime调度的核心底层数据结构，所以Golang中调度模型也称为GMP模型。GMP分别代表的含义如下：
+**G**[^1]，**M**[^2]，**P**[^3] 分别是Go runtime调度的核心底层数据结构，所以Golang中调度模型也称为GMP模型。GMP分别代表的含义如下：
 
 - **G** - Goroutine，为Go协程，是参与调度与执行的最小单位，是并发的关键。
 - **M** - Machine，指的是系统级线程，负责执行G。
@@ -222,7 +222,7 @@ Golang在底层实现了混合型线程模型。下图中M代表着系统线程�
 
 ![](https://static.cyub.vip/images/202208/gmp.png)
 
-Golang最开始的调度模型只有G和M，G放在全局队列中，M都是从全局队列中获取可运行的G，这需要全局的锁保证并发安全，性能比较差。后续追加P数据结构，对应每一个CPU核心，M执行G之前都需关联一个P，后续M获取G只需从其关联的P的本地队列获取，这个获取过程是无锁。具体为啥加入P可以参看官方设计文档：[Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit)
+Golang最开始的调度模型只有G和M，G放在全局队列中，M都是从全局队列中获取可运行的G，这需要全局的锁保证并发安全，性能比较差[^4]。后续追加P数据结构，对应每一个CPU核心，M执行G之前都需关联一个P，后续M获取G只需从其关联的P的本地队列获取，这个获取过程是无锁。
 
 当M关联的P的LRQ没有可以执行的G时候，其可以从Gloable runable queue(GRQ)或者其他P上窃取(work stealing)可以执行的G。
 
@@ -251,11 +251,11 @@ func main() {
 
 - 每个P有个局部队列(LRQ)，局部队列保存待执行的goroutine(流程2)，当M绑定的P的的局部队列已经满了之后就会把goroutine放到全局队列(流程2-1)
 
-- 每个P和一个M绑定，**M是真正的执行P中goroutine的实体(流程3)**，M从绑定的P中的局部队列获取G来执行
+- 每个P和一个M绑定，**M是真正的执行P中goroutine的实体(流程3)** ，M从绑定的P中的局部队列获取G来执行
 
 - 当M绑定的P的局部队列为空时，M会从全局队列获取到本地队列来执行G(流程3.1)，当从全局队列中没有获取到可执行的G时候，M会从其他P的局部队列中偷取G来执行(流程3.2)，这种从其他P偷的方式称为**work stealing**
 
-- 当G因系统调用阻塞(属于系统调用阻塞）时会阻塞M，此时P会和M解绑即**hand off**，并寻找新的idle的M，若没有idle的M就会新建一个M(流程5.1)。
+- 当G因系统调用阻塞(属于系统调用阻塞）时会阻塞M，此时P会和M解绑即**hand off**，并寻找新的idle的M，若没有idle的M就会新建一个M(流程5.1)
 
 - 当G因channel(属于用户态阻塞)或者network I/O阻塞时，不会阻塞M，M会寻找其他runnable的G；当阻塞的G恢复后会重新进入runnable进入P队列等待执行(流程5.3)
 
@@ -276,3 +276,8 @@ func main() {
 - [Is Parallel Programming Hard, And, If So, What Can You Do About It?](https://cdn.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html)
 - [关于Go并发编程，你不得不知的“左膀右臂”——并发与通道！](https://mp.weixin.qq.com/s/VBn3A9P52HTEttt1gVFxpA)
 - [深入Go语言之旅-GMP模型](https://go.cyub.vip/gmp/gmp-model.html)
+
+[^1]:[https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L407-L506](https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L407-L506)
+[^2]:[https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L519-L601](https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L519-L601)
+[^3]:[https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L603-L759](https://github.com/golang/go/blob/master/src/runtime/runtime2.go#L603-L759)
+[^4]:[Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit)
