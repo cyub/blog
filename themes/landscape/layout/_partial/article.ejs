@@ -19,12 +19,19 @@
           </p>
         <% } %>
       <% } else { %>
+       <!-- Table of Contents -->
+<% if (!index){ %>
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        <%- toc(post.content) %>
+    </div>
+<% } %>
         <%- post.content %>
       <% } %>
     </div>
     <footer class="article-footer">
       <a data-url="<%- post.permalink %>" data-id="<%= post._id %>" class="article-share-link"><%= __('share') %></a>
-      <% if (post.comments && config.disqus_shortname){ %>
+      <% if ((post.comments || 1) && config.disqus_shortname){ %>
         <a href="<%- post.permalink %>#disqus_thread" class="article-comment-link"><%= __('comment') %></a>
       <% } %>
       <%- partial('post/tag') %>
@@ -35,7 +42,7 @@
   <% } %>
 </article>
 
-<% if (!index && post.comments && config.disqus_shortname){ %>
+<% if (!index && (post.comments|| 1) && config.disqus_shortname){ %>
 <section id="comments">
   <div id="disqus_thread">
     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
