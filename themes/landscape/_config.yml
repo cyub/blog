@@ -12,7 +12,7 @@ fancybox: true
 sidebar: right
 widgets:
 - category
-- tag
+#- tag
 - tagcloud
 - archive
 - recent_posts
@@ -28,7 +28,8 @@ archive_type: 'monthly'
 show_count: false
 
 # Miscellaneous
-google_analytics:
+disqus_shortname: www-cyub-vip
+google_analytics: UA-172956998-1
 gauges_analytics:
 favicon: /favicon.png
 twitter:

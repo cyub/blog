@@ -3,22 +3,44 @@ Stuff you should know, stuff I should remember
 
 ## Installation
 
-1. Hexo 
+1. Nodejs
 
-2. Caddy
+Ubuntu系统下安装Node.js v18.x：
+
+```
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+```
+
+其他版本的安装方式见：https://github.com/nodesource/distributions
+
+2. Hexo
+
+```
+npm install -g hexo
+```
+
+3. Nginx
+
+```
+apt install nginx
+```
 
 ## Configuration
 
-Caddy vhost Config
+Nginx vhost Config
 
 ```
-http://www.cyub.vip:80 http://cyub.vip:80 {
-	proxy / blog.local
-	prometheus
-	git {
-	  repo https://github.com/cyub/blog
-	  path /wwwroot/blog/source/_posts
-	  interval 3600
-	}
+server {
+    listen 80;
+    server_name www.cyub.vip cyub.vip;
+    root /var/www/blog/public;
 }
+```
+
+## Generate static files
+
+```bash
+cd /var/www/blog
+npm run build
 ```
