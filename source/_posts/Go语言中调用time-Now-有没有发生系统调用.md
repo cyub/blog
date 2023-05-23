@@ -100,7 +100,7 @@ MOVQ	m_g0(BX), DX
 MOVQ	(g_sched+gobuf_sp)(DX), SP	// Set SP to g0 stack
 ```
 
-根据GMP模型，M执行的栈可能是系统栈（即g0栈）或者signal栈上，也有可能用户线程栈（即gorountine栈）上。通过`getg()`可以返回正在执行的g，这个g可能是M的g0，或者gsignal，也可能是和M关联的goroutine，而`getg().m.curg`返回的永远是M关联的goroutine，那么我们可以通过两者比较`getg() == getg().m.curg`判断当前M执行的栈是不是系统栈。上面汇编代码切换到系统栈之前进行栈类型判断就是基于此实现的。
+根据GMP模型，M执行的栈可能是系统栈（即g0栈）或者signal栈上，也有可能用户线程栈（即goroutine栈）上。通过`getg()`可以返回正在执行的g，这个g可能是M的g0，或者gsignal，也可能是和M关联的goroutine，而`getg().m.curg`返回的永远是M关联的goroutine，那么我们可以通过两者比较`getg() == getg().m.curg`判断当前M执行的栈是不是系统栈。上面汇编代码切换到系统栈之前进行栈类型判断就是基于此实现的。
 
 第二功能就是调用`runtime·vdsoClockgettimeSym`变量指向的函数，来获取当前秒数和毫秒数。这个也是time.Now()实现的核心。
 
@@ -150,7 +150,7 @@ noswitch:
 
 ## 什么vDSO?
 
-vDSO是Virtual Dynamic Shared Object的缩写，中文名称是虚拟动态共享对象，是Linux内核对用户空间暴露内核函数的一种机制。vDSO实现方式是将内核中某些不涉及安全的系统调用代码直接映射到用户空间里面，那么用户代码不再使用系统调用，也能完成相关功能。由于避免了系统调用时候需要用户空间到内核空间的切换，vDSO机制可以减少性能上面的消耗。vDSO支持的系统调用有`clock_gettime`,`time`,`getcpu`等。
+vDSO是Virtual Dynamic Shared Object的缩写，Dynamic Shared Object是我们非常熟悉的Linux下面的动态库的全称。vDSO中文名称是虚拟动态共享对象，是Linux内核对用户空间暴露内核函数的一种机制。vDSO实现方式是将内核中某些不涉及安全的系统调用代码直接映射到用户空间里面，那么用户代码不再使用系统调用，也能完成相关功能。由于避免了系统调用时候需要用户空间到内核空间的切换，vDSO机制可以减少性能上面的消耗。vDSO支持的系统调用有`clock_gettime`,`time`,`getcpu`等。
 
 我们可以通过查看进程的内存映射，可以找到vDSO模块：
 
@@ -284,3 +284,4 @@ func vdsoauxv(tag, val uintptr) {
 - [About ELF Auxiliary Vectors](http://articles.manugarg.com/aboutelfauxiliaryvectors.html)
 - [linux syscalls on x86_64](http://blog.tinola.com/?e=5)
 - [Linux的虚拟系统调用加速](http://readm.tech/2016/09/23/syscall/)
+- [Linux vDSO 机制](https://hsqstephenzhang.github.io/2022/02/10/linux/syscall/vdso/)
