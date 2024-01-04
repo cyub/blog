@@ -9,7 +9,7 @@ categories:
   - 翻译
 date: 2024-01-04 21:42:00
 ---
-**原文**：[SSL and SSL Certificates Explained For Beginners](www.steves-internet-guide.com/ssl-certificaates-explained/)
+**原文：** [SSL and SSL Certificates Explained For Beginners](www.steves-internet-guide.com/ssl-certificaates-explained/)
 
 **安全套接字层 (SSL，全称Secure Sockets Layer)** 和**传输层安全 (TLS，全称Transport Layer security)** 是通过计算机网络或链接提供安全通信的协议。它们通常用于网页浏览和电子邮件。在本教程中，我们将了解学习到：
 - TLS 和 SSL
@@ -35,7 +35,7 @@ SSL/TLS 提供数据加密、数据完整性和身份验证功能。这意味着
 
 这些问题的解决办法是：
 - **对其进行加密(Encrypt it)** ： 这会使内容无法读取，因此对于查看该消息的任何人来说，它只是乱码。
-- **签名(Sign it)** ： 这可以让收件人确信是你发送的邮件，并且邮件未被更改。
+- **签名(Sign it)** ： 这可以让收件人确信是你发送的邮件，并且邮件未被篡改。
 
 这两个过程都需要使用密钥。这些密钥只是数字（常见的是 128 位），然后使用特定方法（通常称为算法）与消息组合，例如RSA，对消息进行加密或签名。
 
@@ -112,7 +112,7 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 - mail.mydomain.com
 - www.mydomain.com
 - ftp.mydomain.com
-- ETC
+- 等等
 
 它不能用于保护 mydomain.com 和 myotherdomain.com。
 
@@ -128,8 +128,8 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 你还可以更改所涵盖的域名，但需要重新颁发证书。
 
 ## 为什么要使用商业证书？
-使用免费软件工具可以非常轻松地创建你自己的 SSL 证书和加密密钥。
-这些密钥和证书与商业密钥和证书一样安全，并且在大多数情况下可以被认为更安全。
+
+使用免费软件工具可以非常轻松地创建你自己的 SSL 证书和加密密钥。这些密钥和证书与商业密钥和证书一样安全，并且在大多数情况下可以被认为更安全。
 
 当你的证书需要广泛支持时，商业证书是必要的。这是因为大多数 Web 浏览器和操作系统都内置了对主要商业证书颁发机构的支持。
 
@@ -144,13 +144,13 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 - 二进制文件 (.DER)
 - base64格式文本文件 (.PEM)
 
-使用的常见文件扩展名是：
+数字证书使用的常见文件扩展名是：
 - DER
 - PEM（隐私增强型电子邮件）
 - CRT
 - CERT
 
-注意：文件扩展名和编码之间没有真正的关联。这意味着 .crt 文件可以是 .der 编码文件或 .pem 编码文件。
+**注意：**文件扩展名和编码之间没有真正的关联。这意味着 .crt 文件可以是 .der 编码文件或 .pem 编码文件。
 
 我如何知道你是否有 .der 或 .pem 编码文件？
 
@@ -164,14 +164,12 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 
 ![](https://static.cyub.vip/images/202401/pem-certificate-example.jpg)
 
-需要注意的重要一点是，它们以“Begin Certificate”和“ End Certificate ”行开始和结束。
-证书可以存储在自己的文件中，也可以一起存储在称为捆绑(bundle)包的单个文件中。
+需要注意的重要一点是，它们以“Begin Certificate”和“ End Certificate ”行开始和结束。证书可以存储在自己的文件中，也可以一起存储在称为捆绑(bundle)包的单个文件中。
 
 ## 根 CA 捆绑包和哈希证书
+
 尽管根证书作为单个文件存在，但它们也可以组合成一个包(bundle)。
-在基于 Debian 的 Linux 系统上，这些根证书与名为 **ca-certificates.crt** 的文件一起存储在 **/etc/ssl/certs** 文件夹中。
-该文件是系统上所有根证书的捆绑包。
-它由系统创建，如果使用 [update-ca-certificates](http://manpages.ubuntu.com/manpages/bionic/man8/update-ca-certificates.8.html) 命令添加新证书，则可以更新它。
+在基于 Debian 的 Linux 系统上，这些根证书与名为 **ca-certificates.crt** 的文件一起存储在 **/etc/ssl/certs** 文件夹中。该文件是系统上所有根证书的捆绑包。它由系统创建，如果使用 [update-ca-certificates](http://manpages.ubuntu.com/manpages/bionic/man8/update-ca-certificates.8.html) 命令添加新证书，则可以更新它。
 
 **ca-certifcates.crt** 文件内容格式如下所示:
 
@@ -194,9 +192,7 @@ mosquitto_pub --capath /etc/ssl/certs/
 
 ![](https://static.cyub.vip/images/202401/certificate-chain.jpg)
 
-对于要验证证书真实性的客户端，它需要能够验证链中所有 CA 的签名，这意味着客户端需要访问链中所有 CA 的证书。
-
-客户端可能已经安装了根证书，但可能还没有安装中间 CA 的证书。
+对于要验证证书真实性的客户端，它需要能够验证链中所有 CA 的签名，这意味着客户端需要访问链中所有 CA 的证书。客户端可能已经安装了根证书，但可能还没有安装中间 CA 的证书。
 
 ![](https://static.cyub.vip/images/202401/cetificate-bundle-rfc.jpg)
 
@@ -213,23 +209,23 @@ mosquitto_pub --capath /etc/ssl/certs/
 
 ## 常见问题及解答
 
-**Q** : 什么是值得信赖的商店？
+**Q**: 什么是值得信赖的商店？
 
-**A** : 这是你信任的 CA 证书的列表。所有网络浏览器都带有受信任的 CA 列表。
+**A**: 这是你信任的 CA 证书的列表。所有网络浏览器都带有受信任的 CA 列表。
 
-**Q** : 我可以将自己的 CA 添加到浏览器信任存储中吗？
+**Q**: 我可以将自己的 CA 添加到浏览器信任存储中吗？
 
-**A** : 是的，在 Windows 上，如果右键单击证书，你应该会看到一个安装选项
+**A**: 是的，在 Windows 上，如果右键单击证书，你应该会看到一个安装选项
 ![](https://static.cyub.vip/images/202401/install-certificate-windows.jpg)
 
-**Q** : 什么是**自签名证书(self signed certificate)**？
+**Q**: 什么是**自签名证书(self signed certificate)**？
 
-**A** : 自签名证书是由证书验证的同一实体签署的证书。这就像你批准自己的护照申请一样。参见[维基百科](https://en.wikipedia.org/wiki/Self-signed_certificate)。
+**A**: 自签名证书是由证书验证的同一实体签署的证书。这就像你批准自己的护照申请一样。参见[维基百科](https://en.wikipedia.org/wiki/Self-signed_certificate)。
 
-**Q** : 什么是**证书指纹(certificate fingerprint)**？
+**Q**: 什么是**证书指纹(certificate fingerprint)**？
 
-**A** : 它是实际证书的哈希值，可用于验证证书，而无需安装 CA 证书。这对于没有大量内存来存储 CA 文件的小型设备非常有用。手动验证证书时也会使用它。请参阅[此处](https://www.ghacks.net/2013/07/27/use-fingerprints-to-determine-the-authenticity-of-an-internet-website/)了解更多详情。
+**A**: 它是实际证书的哈希值，可用于验证证书，而无需安装 CA 证书。这对于没有大量内存来存储 CA 文件的小型设备非常有用。手动验证证书时也会使用它。请参阅[此处](https://www.ghacks.net/2013/07/27/use-fingerprints-to-determine-the-authenticity-of-an-internet-website/)了解更多详情。
 
-**Q** : 如果服务器证书被盗，会发生什么情况？
+**Q**: 如果服务器证书被盗，会发生什么情况？
 
 **A**: 可以撤销。客户端（浏览器）可以通过多种方式检查证书是否被吊销，请参阅[此处](https://medium.com/@alexeysamoshkin/how-ssl-certificate-revocation-is-broken-in-practice-af3b63b9cb3)。
