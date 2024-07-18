@@ -97,7 +97,7 @@ tmux操作一共分为三类：
 操作名	| 命令/快捷键 |	说明
 ------- | ---------- | ------
 新建会话	| tmux new -s sessionName |	s代表session
-退出会话	| prefix d	| d代表detach，表示脱离当前会话
+分离会话	| prefix d	| d代表detach，表示分离当前会话
 查看会话列表 | tmux ls |	会列出所有tmux创建的会话
 查看会话列表|	prefix s |	列出会话列表，并且可以使用方向键进行选择，然后按Enter键，进行切换不同的会话
 重新进入会话	| tmux a -t sessionName |	a代表attach，-t为指定已经存在的会话
@@ -118,7 +118,7 @@ tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xar
 创建窗口 |	prefix c |	创建一个新的window,创建出来的窗口由窗口序号+窗口名字*显示，其中*表示当前操作的窗口
 重命名window	|  prefix ,	| 为当前所在的window重命名
 查看窗口列表 | prefix w | 显示窗口列表
-切换window	| prefix n/p/w/0 |	n(next):切换到下一个window; p(previous):切换到上一个window; 0(number):切换到0号窗口; w(windows):列出当前会话的所有的窗口，这时候可以使用上下键进行切换。
+切换window	| prefix n/p/w/0 |	n(next):切换到下一个window;<br/> p(previous):切换到上一个window; <br/>0(number):切换到0号窗口; <br/>w(windows):列出当前会话的所有的窗口，这时候可以使用上下键进行切换。<br> f(find)：通过窗口名称查找窗口
 关闭window	| prefix & |	关闭当前window，会提示是否要关闭，输入即可。
 实现鼠标滚动历史输出 |	prefix \[ |	默认情况输出不能往上翻滚，使用ctrl+b \[即可往上翻了，退出用ctrl+c即可。
 
@@ -129,16 +129,16 @@ tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xar
 ------- | ------------ | --------
 垂直分屏	| prefix %	| 把当前window垂直分为两个
 水平分屏 |	prefix " |	把当前window水平分为两个
-切换窗格 |	prefix Up/Down/Left/Right |	切换窗格
+切换窗格 |	prefix o/Up/Down/Left/Right |	o是循环切换窗格，UP,Down,Left,Right代表上下左右箭头
 删除窗格 |	prefix  x |  关闭当前使用的窗格，关闭之前会提示，输入y即可
 打开时钟  | prefix t | 在panel显示时钟
 最大化 | prefix z | 当前panel最大化
-显示panne窗口 | prefix q | 显示panel窗口号, ctrl+b 窗口跳到指定窗口
+显示窗格 | prefix q | 显示窗格号, ctrl+b 窗格号：跳到指定窗格
 与上一个窗格交换位置 | prefix {  | 与上一个窗格交换位置
 与下一个窗格交换位置 | prefix } | 与下一个窗格交换位置
 显示数字时钟 | prefix t  | 窗口中央显示一个数字时钟
 列出所有快捷键 | prefix ?  | 列出所有快捷键
-命令提示符 | prefix :  | 命令提示符
+进入命令模式 | prefix :  | 进入命令模式，比如进入命令模式之后，可以输入new-window -n console，创建名为console的窗口
 
 
 ## 持久保存Tmux会话
@@ -177,6 +177,8 @@ bind-key -T copy-mode-vi r send-keys -X rectangle-toggle
 ```
 
 `prefix` + `[` 开启复制模式，然后按下`v`键开始复制，按方向键选择要复制的文本，按下`y`键或`enter`键把文本复制到tmux buffer里面。最后`prefix` + `]`黏贴
+
+当window下PuTTY或者Cygwin终端中使用tmux时候，可以配置`setw -g mode-mouse on`，当需要从tmux中复制内容到系统剪切板时候，先按住`shift`键，然后通过鼠标选择文本。反之，先按住`shift`键，然后点击鼠标右键，再进行复制。
 
 
 
@@ -231,31 +233,41 @@ fi
     
 附一份tmux配置文件:
 
-```
+```yaml
 # 基础设置
-set -g default-terminal "screen-256color"
 set -g display-time 3000
+# 设置 tmux 等待前缀键和命令键之间的时间间隔为0
 set -g escape-time 0
 set -g history-limit 65535
+
+# 设置窗口和面板索引从1开始
 set -g base-index 1
 set -g pane-base-index 1
 
-# 前缀绑定 (Ctrl+a)
+# 前缀改成Ctrl+a
 set -g prefix ^a
 unbind ^b
 bind a send-prefix
 
-# 分割窗口
+# 支持|-分割窗口
 unbind '"'
 bind - splitw -v
 unbind %
 bind | splitw -h
 
-# 选中窗口
-bind-key k select-pane -U
-bind-key j select-pane -D
-bind-key h select-pane -L
-bind-key l select-pane -R
+# 支持通过h，j，k 和 l选中窗口
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# 支持通过prefix + H/J/K/L来调整窗口大小
+# -r使用快捷键变成可重复的（repeatable）的，这意味着只需要按下前缀键一次，
+# 然后就可以在最大重复限制范围内持续地按下定义的命令键
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
 
 # copy-mode 将快捷键设置为 vi 模式
 setw -g mode-keys vi
@@ -284,7 +296,17 @@ setw -g monitor-activity on
 set -g visual-activity on
 
 # 居中窗口列表
-set -g status-justify center
+set -g status-interval 60 # 状态栏每隔60s
+set -g status-justify center # 状态栏居中显示
+
+# 设置状态栏颜色
+set -g status-fg white
+set -g status-bg black
+
+# 设置状态栏信息，依次显示会话，窗口，窗格id信息
+set -g status-left-length 40
+set -g status-left "#[fg=green]Session: #S #[fg=yellow]#I #[fg=cyan]#P"
+
 ```    
     
 ## 参考
