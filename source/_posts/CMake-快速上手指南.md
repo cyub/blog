@@ -1,4 +1,4 @@
-title: CMake 快速上手指南
+title: CMake快速上手指南
 author: Tink
 tags:
   - 构建工具
