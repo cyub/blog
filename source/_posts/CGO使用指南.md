@@ -3,12 +3,14 @@ author: tinker
 date: 2022-05-09 03:04:24
 tags:
 ---
-Go 提供一个名为`C`的伪包(pseudo-package)来与C 语言交互，这种Go语言与C语言交互的机制叫做CGO。当 Go 代码中加入`import C`语句来导入`C`这个不存在的包时候，会启动CGO特性。此后在Go 代码中我们可以使用`C.`前缀来引用C语言中的变量、类型，函数等。
+Go 提供一个名为`C`的伪包(pseudo-package)用来与 C/C++ 语言进行交互操作，这种Go语言与C语言交互的机制叫做 **CGO**。通过 CGO 我们可以在 Go 语言中调用 C/C++ 代码，也可以在 C/C++ 代码中调用Go语言。CGO 本质就是 Go 实现的 [FFI](https://en.wikipedia.org/wiki/Foreign_function_interface)（全称为Foreign function interface，用来描述一种编程语言编写的程序可以调用另一种编程语言编写的服务的机制）解决方案。
+
+当 Go 代码中加入`import C`语句来导入`C`这个不存在的包时候，会启动 CGO 特性。此后在 Go 代码中我们可以使用`C.`前缀来引用C语言中的变量、类型，函数等。启动 CGO 特性时候，需要确保环境变量 `CGO_ENABLED` 值是1，我们可以通过`go env CGO_ENABLED`查看该环境变量的值，通过`go env -w CGO_ENABLED=1`用来设置该环境变量值。
 
 
 ## 序言
 
-我们可以给`import C`语句添加注释，在注释中可以引入C的头文件，以及定义和声明函数和变量，此后我们可以在 Go 代码中引用这些函数和变量。这种注释称为 **序言(preamble)**。需要注意的是 **序言和`import C`语句之间不能有换行**，序言中的静态变量是不能被Go代码引用的，而静态函数是可以的。
+我们可以给`import C`语句添加注释，在注释中可以引入C的头文件，以及定义和声明函数和变量，此后我们可以在 Go 代码中引用这些函数和变量。这种注释称为 **序言(preamble)** 。需要注意的是 **序言和`import C`语句之间不能有换行**，序言中的静态变量是不能被Go代码引用的，而静态函数是可以的。
 
 ```go
 package main
@@ -33,9 +35,11 @@ func main() {
 
 <!--more-->
 
-执行`go build`命令时候，我们可以使用`-n`选项查看所有执行的命令：
+如果Go 代码中存在`import C`，那么编译时候Go 编译器会寻找代码目录中其他非Go文件，对于后缀为`.c`、`.s`、`.S`的文件，会使用C编译器进行编译。后缀为`.cc`、`.cpp` 或 `.cxx` 文件使用C++编译器编译。对于`.h`、`.hh`、`.hpp` 或 `.hxx`后缀的文件，它们是C/C++的头文件，不会单独编译，如果更改了这些头文件，包括非Go代码都会重新编译。
 
-```
+执行`go build`命令时候，我们可以使用`-n`(`-x`也可以，只不过它会执行相关编译命令）选项查看所有要执行的命令：
+
+```bash
 vagrant@vagrant:/tmp/cgo$ go build -n
 
 #
@@ -61,15 +65,27 @@ cd $WORK/b001
 ...
 ```
 
-从上面可以看到在CGO模式下，gcc参加了编译工作。需要注意同Go包一样，C语言模块编译后也会缓存起来，下次编译时候直接使用，如果我们之前构建过应用，在代码没有变动情况下，使用`go build -n`就看不见gcc命令了。这时候我们可以使用`-a`选项强制重新构建包。
+从上面可以看到在CGO模式下，gcc参加了编译工作。需要注意同Go包一样，C 语言编译后也会缓存起来，下次编译时候直接使用，如果我们之前构建过应用，在代码没有变动情况下，使用`go build -n`就看不见gcc命令了。这时候我们可以使用`-a`选项强制重新构建包。
 
-如果Go 代码中存在`import C`，那么编译时候Go 编译器会查找代码目录中其他非Go文件，对于后缀为`.c`、`.s`、`.S`的文件，会使用C编译器进行编译。后缀为`.cc`、`.cpp` 或 `.cxx` 文件使用C++编译器编译。对于`.h`、`.hh`、`.hpp` 或 `.hxx`后缀的文件，它们是C/C++的头文件，不会单独编译，如果更改了这些头文件，包括非Go代码都会重新编译。
+另外借助`go tool cgo`工具，我们可以生成绑定的代码：
+
+```shell
+go tool cgo main.go
+```
+
+上面命令会在当前目录下面生`_obj`目录，该目录存放着一系列生成的文件：
+
+- _cgo_gotypes.go：定义 C 函数和类型的 Go 封装。
+- _cgo_main.c：主要用于初始化 C 和 Go 的运行时。
+- _cgo_export.c：包含 Go 导出到 C 的接口实现。
+
+
 
 ### #cgo指令
 
-在序言中我们可以使用`#cgo`指令来设置在构建C语言模块时候的编译器参数CFLAGS和链接器参数LDFLAGS。
+在序言中我们可以使用`#cgo`指令来设置在构建 `C` 编译器参数 `CFLAGS` 和链接器参数 `LDFLAGS`。
 
-```
+```go
 // #cgo CFLAGS: -g -Wall -I./include
 // #cgo CFLAGS: -DPNG_DEBUG=1
 // #cgo LDFLAGS: -L/usr/local/lib -lpng
@@ -77,17 +93,17 @@ cd $WORK/b001
 import "C"
 ```
 
-上面CFLAGS中-g选项用于开启`debug symbols`， -Wall用于开启`all warning`，-I用于设置头文件目录，-DPNG_DEBUG=1用于设置宏PNG_DEBUG值为1。
+上面 `CFLAGS` 中 `-g` 选项用于开启`debug symbols`， `-Wall` 用于开启`all warning`，`-I` 用于设置头文件目录，`-DPNG_DEBUG=1` 用于设置宏`PNG_DEBUG`值为1。
 
-在设置LDFLAGS时候，可以使用`${SRCDIR}`来替换源码的路径，比如：
+在设置 `LDFLAGS` 时候，可以使用 `${SRCDIR}` 来替换源码的路径，比如：
 
-```
+```go
 // #cgo LDFLAGS: -L${SRCDIR}/libs -lfoo
 ```
 
 将会拓展为
 
-```
+```go
 // #cgo LDFLAGS: -L/go/src/foo/libs -lfoo
 ```
 
@@ -95,58 +111,25 @@ CGO编译时候，总是隐式包含`-I${SRCDIR}`这个链接选项，并且优�
 
 此外`#cgo`指令还支持条件选择，只有满足特定系统或者CPU架构时候编译或者连接选项才会生效：
 
-```
+```go
 // #cgo amd64 386 CFLAGS: -DX86=1 // amd64 368 平台才设置该编译选项
 // #cgo !amd64 CFLAGS: -DX86=1 // 非amd64平台才设置编译该编译选项
 ```
 
-当然我们也可以使用`#cgo pkg-config`指令来获取设置CFLAGS和LDFLAGS参数。`#cgo pkg-config`指令依赖`pkg-config`命令，`pkg-config`可以帮助我们编译时候插入正确的编译器参数，而不必硬编码，例如我们可以使用**gcc -o test test.c $(pkg-config --libs --cflags glib-2.0)**来找到glib库。`pkg-config`在CGO中使用方法如下：
+当然我们也可以使用`#cgo pkg-config`指令来获取设置CFLAGS和LDFLAGS参数。`#cgo pkg-config`指令依赖`pkg-config`命令，`pkg-config`可以帮助我们编译时候插入正确的编译器参数，而不必硬编码，例如我们可以使用 **gcc -o test test.c $(pkg-config --libs --cflags glib-2.0)** 来找到glib库。你可以查看[这篇文章](https://wiki.cyub.vip/cheatsheet/pkg-config/)来获取有关 `pkg-config` 更多信息。`pkg-config`在CGO中使用方法如下：
 
-```
+```go
 // #cgo pkg-config: png cairo
 // #include <png.h>
 import "C"
 ```
 
-## 变量
+## 数据类型
+
 
 ### Go 语言中引用 C 语言类型
 
-#### char
 
-```go
-type C.char
-type C.schar (signed char)
-type C.uchar (unsigned char)
-```
-
-#### short
-
-```go
-type C.short
-type C.ushort (unsigned short)
-```
-
-#### int
-
-```go
-type C.int
-type C.uint (unsigned int)
-```
-
-#### long
-
-```go
-type C.long
-type C.ulong (unsigned long)
-```
-
-#### longlong
-
-```go
-type C.longlong (long long)
-type C.ulonglong (unsigned long long)
-```
 
 #### float
 
@@ -178,20 +161,56 @@ C.union_<name_of_C_Union>
 C.enum_<name_of_C_Enum>
 ```
 
-#### Void*
+#### void*
 
 C语言中的`void *`对应Go语言中的`unsafe.Pointer`。
 
 ```go
 cs := C.CString("Hello from stdio")
-C.free(unsafe.Pointer(cs))
+C.free(unsafe.Pointer(cs)) // free函数接收void *类型参数
 ```
 
-#### C-Go 字符串类型转换
+### C-Go 类型转换
 
-由于C语言和Go语言中字符串底层内存模型不一样，且Go 是gc型语言。Go类型字符串需要转换成C类型字符串，才能作为参数传递给C函数，反过来也是一样。
+#### 基本数值类型转换
 
-**Go 类型转换成C 类型**:
+Go 和 C 的基本数值类型转换对照表如下：
+
+C语言类型 | CGO类型 | Go类型
+--- | --- | ---
+char |  C.char |  byte
+singed char |  C.schar |  int8
+unsigned char |  C.uchar |  uint8/byte
+short |  C.short |  int16
+unsigned short |  C.ushort |  uint16
+int |  C.int |  int32
+unsigned int |  C.uint |  uint32
+long |  C.long |  int32
+unsigned long |  C.ulong |  uint32
+long long int |  C.longlong |  int64
+unsigned long long int |  C.ulonglong |  uint64
+float |  C.float |  float32
+double |  C.double |  float64
+size_t |  C.size_t |  uint
+
+C 中的整形 int 在标准中是没有定义具体字长的，但一般默认认为是 4 字节，对应 CGO 类型中 C.int 则明确定义了字长是 4 ，但 golang 中的 int 字长则是 8 ，因此对应的 Go 类型不是 int 而是 int32 。为了避免误用，C 代码最好使用 C99 标准的数值类型(引入`<stdint.h>`头），对应的转换关系如下：
+
+C语言类型 | CGO类型 | Go类型
+--- | --- | ---
+int8_t | C.int8_t | int8
+uint8_t | C.uint8_t | uint8
+int16_t | C.int16_t | int16
+uint16_t | C.uint16_t | uint16
+int32_t | C.int32_t | int32
+uint32_t | C.uint32_t | uint32
+int64_t | C.int64_t | int64
+uint64_t | C.uint64_t | uint64
+
+
+
+#### Go 类型字符串转换成C 类型
+
+由于C语言和Go语言中字符串底层内存模型不一样，且 Go 是gc型语言，Go类型字符串需要转换成C类型字符串，才能作为参数传递给C函数，反过来也是一样。
 
 ```go
 // The C string is allocated in the C heap using malloc.
@@ -206,7 +225,17 @@ func C.CString(string) *C.char
 func C.CBytes([]byte) unsafe.Pointer
 ```
 
-**C 类型字符串转换成Go 类型**:
+需要注意得是 Go 类型字符串转换成 C 类型字符串之后，以及 Go类型字节切片 转换成C类型字节数组时候，需要手动进行回收：
+
+```go
+cs := C.CString("hello, world") // C.CString底层使用到C语言malloc进行内存分配，所以需要调用C语言free函数进行释放
+defer C.free(unsafe.Pointer(cs)) // C语言中字符串本质是char类型数组，free的参数是指向char数组的指针，所以需要使用unsafe.Pointer获取cs指针
+
+cBytes := C.CBytes(goBytes) // go字节切片转换成C类型字节数字
+defer C.free(cBytes) // 释放内存
+```
+
+#### C 类型字符串转换成Go 类型
 
 ```go
 // C string to Go string
@@ -219,12 +248,36 @@ func C.GoStringN(*C.char, C.int) string
 func C.GoBytes(unsafe.Pointer, C.int) []byte
 ```
 
-需要注意得是Go 类型字符串转换成C 类型字符串之后，需要手动进行回收：
+
+#### Go 字节切片转换成 C 数组
 
 ```go
-cs := C.CString("hello, world")
-defer C.free(unsafe.Pointer(cs)) // C语言中字符串本质是char类型数组，free的参数是指向char数组的指针，所以需要使用unsafe.Pointer获取cs指针
+package main
+ 
+/*
+#include <stdint.h>
+ 
+static void fill_255(char* buf, int32_t len) {
+    int32_t i;
+    for (i = 0; i < len; i++) {
+        buf[i] = 255;
+    }
+}
+*/
+import "C"
+import (
+    "fmt"
+    "unsafe"
+)
+ 
+func main() {
+    b := make([]byte, 5)
+    fmt.Println(b) // [0 0 0 0 0]
+    C.fill_255((*C.char)(unsafe.Pointer(&b[0])), C.int32_t(len(b)))
+    fmt.Println(b) // [255 255 255 255 255]
+}
 ```
+
 
 ## 函数
 
@@ -394,7 +447,7 @@ func main() {
 0 invalid argument
 ```
 
-#### C 语言调用 Go 语言函数
+### C 语言调用 Go 语言函数
 
 Go语言中函数要能被C语言调用，需要使用 `export` 指令进行导出。
 
