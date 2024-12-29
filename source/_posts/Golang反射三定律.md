@@ -417,7 +417,7 @@ t is now {77 Sunset Strip}
 如果我们修改程序以便从 `t` 而不是 `&t` 创建 `s`，则对 `SetInt` 和 `SetString` 的调用将失败，因为 `t` 的字段不可写的。
 
 
-## 总结：
+## 总结
 
 Go 反射三定律：
 
