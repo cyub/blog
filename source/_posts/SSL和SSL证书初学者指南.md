@@ -150,13 +150,11 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 - CRT
 - CERT
 
-**注意：**文件扩展名和编码之间没有真正的关联。这意味着 .crt 文件可以是 .der 编码文件或 .pem 编码文件。
+**注意：** 文件扩展名和编码之间没有真正的关联。这意味着 .crt 文件可以是 .der 编码文件或 .pem 编码文件。
 
 我如何知道你是否有 .der 或 .pem 编码文件？
 
-你可以使用 openssl 工具查找编码类型并在编码之间进行转换。请参阅本教程 – [DER 与 CRT 与 CER 与 PEM 证书](https://www.rickyadams.com/wp/index.php/2017/10/10/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them/)。
-
-你还可以打开该文件，如果它是 ASCII 文本，那么它是 .PEM 编码的证书
+你可以使用 openssl 工具查找编码类型并在编码之间进行转换。请参阅本教程 – [DER 与 CRT 与 CER 与 PEM 证书](https://www.rickyadams.com/wp/index.php/2017/10/10/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them/)。你还可以打开该文件，如果它是 ASCII 文本，那么它是 .PEM 编码的证书
 
 ## 数字证书内容示例
 
