@@ -88,7 +88,7 @@ Hello, World
 
 NASM程序 是基于行的。大多数程序由后跟一个或多个部分的指令组成。行可以有一个可选的标签。大多数行都有一条指令，后跟零个或多个操作数。
 
-![](https://cs.lmu.edu/~ray/images/nasmstructure.png)
+![](https://static.cyub.vip/images/202412/nasmstructure.png)
 
 通常，你将代码放在名为 `.text` 的部分中，将常量数据放在名为 `.data` 的部分中。
 
@@ -149,7 +149,7 @@ XMM0 ... XMM15
 
 研究这张图片；希望它有所帮助：
 
-![](https://cs.lmu.edu/~ray/images/rdx.png)
+![](https://static.cyub.vip/images/202412/rdx.png)
 
 ### 内存操作数(Memory Operands)
 
