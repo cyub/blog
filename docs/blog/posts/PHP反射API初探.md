@@ -1,9 +1,12 @@
 ---
 title: PHP反射API初探
 tags:
-  - PHP
+  - 编程语言/PHP
+  - 反射
 categories:
-  - 开发语言
+  - 编程语言
+authors: 
+  - Tinker
 date: 2017-08-21 22:44:00
 ---
 

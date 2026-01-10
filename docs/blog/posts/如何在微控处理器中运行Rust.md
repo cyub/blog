@@ -1,13 +1,15 @@
 ---
-title: 【翻译】如何在微控制器中运行Rust?
+title: 如何在微控制器中运行Rust?
 authors: 
   - Tinker
 tags:
   - 固件
   - 微控制器
   - 嵌入式编程
+  - 编程语言/Rust
 categories:
-  - Rust
+  - 翻译
+  - 编程语言
 date: 2023-10-22 00:00:00
 ---
 原文：[Running Rust on Microcontrollers](https://blog.mbedded.ninja/programming/languages/rust/running-rust-on-microcontrollers/#rp2040)

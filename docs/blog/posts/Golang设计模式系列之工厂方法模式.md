@@ -3,10 +3,15 @@ title: Golang设计模式系列之工厂方法模式
 authors: 
   - Tinker
 tags:
-  - 设计模式
-categories:
   - Golang设计模式系列
+  - 编程语言/Golang
+categories:
+  - 设计模式
 date: 2020-08-01 11:09:00
+links:
+  - blog/posts/Golang设计模式系列之工厂方法模式.md
+  - blog/posts/Golang设计模式系列之简单工厂模式.md
+  - blog/posts/Golang设计模式系列开篇.md
 ---
 ## 定义
 

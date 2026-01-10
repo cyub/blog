@@ -3,10 +3,10 @@ title: 深入探究Golang函数与函数调用栈
 authors: 
   - Tinker
 tags:
-  - Golang
-  - 分析
+  - 编程语言/Golang
+  - 函数调用栈
 categories:
-  - Golang
+  - 编程语言
 date: 2021-04-12 19:04:00
 ---
 贴一下分享的《深入探究Golang函数与函数调用栈》的PPT。

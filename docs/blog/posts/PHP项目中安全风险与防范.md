@@ -4,8 +4,11 @@ tags:
   - XSS
   - SQL注入
   - CSRF
+  - 编程语言/PHP
 categories:
-  - 开发语言
+  - 编程语言
+authors: 
+  - Tinker
 date: 2018-06-28 20:54:00
 ---
 在PHP开发中，由于编码bug或者配置不正确，如果被恶意利用往往会导致严重安全问题。根据[OWASP Top 10 2017](https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project)里面的10大安全风险，现归纳总结了PHP项目中几种常见安全风险，攻击场景和防范措施。

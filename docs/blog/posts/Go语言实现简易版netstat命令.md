@@ -3,9 +3,10 @@ title: Go语言实现简易版netstat命令
 authors: 
   - Tinker
 tags:
+  - 编程语言/Golang
   - netstat
 categories:
-  - Golang
+  - 编程语言
 date: 2020-11-22 20:22:00
 ---
 ## netstat工作原理

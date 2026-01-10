@@ -1,9 +1,11 @@
 ---
 title: JS实现继承的几种方式
 tags:
-  - JAVASCRIPT
+  - 编程语言/Javascript
 categories:
-  - 开发语言
+  - 编程语言
+authors: 
+  - Tinker
 date: 2018-02-14 08:23:00
 ---
 JS无法像其他高级语言那样通过extend直接实现继承。只通过一定方式来实现继承机制。常见的几种实现继承的方式有：

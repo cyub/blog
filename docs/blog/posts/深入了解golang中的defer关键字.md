@@ -3,10 +3,9 @@ title: 深入了解golang中的defer关键字
 authors: 
   - Tinker
 tags:
-  - golang
-  - golang defer
+  - 编程语言/Golang
 categories:
-  - 开发语言
+  - 编程语言
 date: 2020-05-30 19:53:00
 ---
 golang中的defer关键字是用来声明一个延迟函数，一般称这个函数为defer函数，该函数会在defer语句所在的函数返回之前会执行。通过defer关键字，我们可以修改函数命名返回值，进行资源释放等操作，总的来说defer函数有如下特点和功能：

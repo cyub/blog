@@ -3,10 +3,12 @@ title: Golang源码分析系列之atomic底层实现
 authors: 
   - Tinker
 tags:
-  - Golang
-  - 原子操作
-categories:
   - Golang源码分析系列
+  - 编程语言/Golang
+  - 原子操作
+  - 并发编程
+categories:
+  - 源码分析
 date: 2021-04-05 11:30:00
 ---
 ## atomic概述

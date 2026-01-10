@@ -3,9 +3,10 @@ title: Golang源码分析系列之Channel底层实现
 authors: 
   - Tinker
 tags:
-  - Go通道
-categories:
   - Golang源码分析系列
+  - 编程语言/Golang
+categories:
+  - 源码分析
 date: 2020-11-04 11:48:00
 ---
 Golang中Channel是goroutine间重要通信的方式，是并发安全的，通道内的数据First In First Out，我们可以把通道想象成队列。这里面分析的源码基于[go1.13](https://github.com/golang/go/blob/release-branch.go1.13/src/runtime/chan.go)版本。

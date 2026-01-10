@@ -3,12 +3,12 @@ title: 多网卡模式下Golang应用的流量从指定网卡流入流出方案
 authors: 
   - Tinker
 tags:
-  - Golang
+  - 编程语言/Golang
   - docker
   - iptables
   - nat
 categories:
-  - Golang
+  - 编程语言
   - 项目总结
 date: 2020-11-07 18:17:00
 ---

@@ -3,9 +3,10 @@ title: Golang调度机制浅析
 authors: 
   - Tinker
 tags:
+  - 编程语言/Golang
   - 技术分享
 categories:
-  - Golang
+  - 编程语言
 date: 2022-08-20 10:48:00
 ---
 > 最近在部门中做了一次技术分享，现将分享内容总结成博文发布出来，内容有删改。

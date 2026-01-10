@@ -1,12 +1,14 @@
 ---
-title: 【译文】Go 反射三定律
+title: Go 反射三定律
 authors: 
   - Tinker
 tags:
+  - 编程语言/Golang
   - 反射
   - 反射三定律
 categories:
-  - Golang
+  - 翻译
+  - 编程语言
 date: 2020-11-22 20:32:00
 ---
 原文地址：https://blog.golang.org/laws-of-reflection

@@ -2,9 +2,11 @@
 title: Golang源码分析系列之sync.Map底层实现
 authors: 
   - Tinker
-tags: []
-categories:
+tags: 
   - Golang源码分析系列
+  - 编程语言/Golang
+categories:
+  - 源码分析
 date: 2021-02-28 12:58:00
 ---
 Golang中`sync/map`提供了并发读写map功能。这里面分析的源码基于[go1.14.13](https://github.com/cyub/go-1.14.13/blob/master/src/sync/map.go)版本。

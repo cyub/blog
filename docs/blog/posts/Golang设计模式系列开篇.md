@@ -3,11 +3,17 @@ title: Golang设计模式系列开篇
 authors: 
   - Tinker
 tags:
-  - 设计模式
-categories:
   - Golang设计模式系列
+  - 编程语言/Golang
+categories:
+  - 设计模式
 date: 2020-05-23 18:04:00
+links:
+  - blog/posts/Golang设计模式系列之工厂方法模式.md
+  - blog/posts/Golang设计模式系列之简单工厂模式.md
+  - blog/posts/Golang设计模式系列开篇.md
 ---
+
 <blockquote class="blockquote-center">抽象是用来处理复杂性的主要工具。一个问题越复杂，就越需要抽象来解决</blockquote>
 
 ## 概念
@@ -87,8 +93,8 @@ date: 2020-05-23 18:04:00
 
 - Abstract Factory
 - Builder
-- [Factory/Factory Method Pattern](/2020/08/01/Golang设计模式系列之工厂方法模式/)
-- [Simple Factory Pattern/Static Factory Method](/2020/06/22/Golang设计模式系列之简单工厂模式/)
+- [Factory/Factory Method Pattern](Golang设计模式系列之工厂方法模式.md)
+- [Simple Factory Pattern/Static Factory Method](Golang设计模式系列之简单工厂模式.md)
 - Object Pool
 - Prototype
 - Singleton
