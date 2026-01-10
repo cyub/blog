@@ -1,7 +1,7 @@
 ---
 title: Go语言常见使用错误总结
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 易错点
 categories:

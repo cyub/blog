@@ -1,7 +1,7 @@
 ---
 title: Golang调度机制浅析
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 技术分享
 categories:

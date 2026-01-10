@@ -6,7 +6,7 @@ tags:
     - tow-factor authentication
     - 双因素认证
 authors: 
-  - Tink
+  - Tinker
 ---
 
 英文原文:[two-factor authentication (2FA)](http://searchsecurity.techtarget.com/definition/two-factor-authentication)

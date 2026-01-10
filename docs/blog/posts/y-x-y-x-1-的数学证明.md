@@ -1,7 +1,7 @@
 ---
 title: y % x = y & (x - 1)的数学证明
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 算法
   - 取模运算

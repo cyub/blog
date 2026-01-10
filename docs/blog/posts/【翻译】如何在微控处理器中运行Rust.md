@@ -1,7 +1,7 @@
 ---
 title: 【翻译】如何在微控制器中运行Rust?
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 固件
   - 微控制器

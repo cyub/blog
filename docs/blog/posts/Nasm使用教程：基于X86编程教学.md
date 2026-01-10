@@ -1,7 +1,7 @@
 ---
 title: Nasm使用教程：基于X86编程教学
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 汇编
   - Nasm

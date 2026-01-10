@@ -1,7 +1,7 @@
 ---
 title: 从ISO 639到BCP 47：语言码标准的发展与应用
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 语言码
   - NLP

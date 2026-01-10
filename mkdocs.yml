@@ -118,8 +118,7 @@ extra:
 
 extra_css:
   - "css/extra.css"
-  - "https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/css/fonts.min.css"
-  - "https://cdn.jsdelivr.net/npm/typeface-roboto-mono@1.1.13/index.css"
+  - https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css
 
 extra_javascript:
   - javascripts/mathjax.js

@@ -1,7 +1,7 @@
 ---
 title: CMake快速上手指南
 authors: 
-  - Tink
+  - Tinker
 tags:
   - 构建工具
   - CMake

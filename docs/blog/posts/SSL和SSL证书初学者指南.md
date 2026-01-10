@@ -1,7 +1,7 @@
 ---
 title: 【翻译】SSL和SSL证书初学者指南
 authors: 
-  - Tink
+  - Tinker
 tags:
   - SSL
   - SSL证书
