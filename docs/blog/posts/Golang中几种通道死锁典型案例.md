@@ -3,9 +3,10 @@ title: Golang中几种通道死锁典型案例
 authors: 
   - Tinker
 tags:
-  - Golang
-  - 通道
-categories: []
+  - 编程语言/Golang
+  - 编程技巧
+categories:
+  - 编程语言
 date: 2020-07-19 19:31:00
 ---
 Golang中通道是进行数据同步一个重要手段，当主进程读取空通道，或者向没有协程读取的通道写入时候，都会发生死锁现象（编译时候提示fatal error: all goroutines are asleep - deadlock!）。下面列出几个常见死锁情况。

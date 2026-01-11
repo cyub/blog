@@ -1,7 +1,12 @@
 ---
 title: 'Comprehensive Introduction to Apache Spark, RDDs & Dataframes (Using PySpark)'
 date: 2018-10-23 22:37:23
+authors: 
+  - Tinker
 tags:
+  - 数据存储与中间件/Spark
+categories:
+  - 数据存储与中间件
 ---
 ![Introduction to Apache Spark](http://static.cyub.vip/images/201810/spark_introduction.png)
 原文地址：[Comprehensive Introduction to Apache Spark, RDDs & Dataframes (using PySpark)](https://www.analyticsvidhya.com/blog/2016/09/comprehensive-introduction-to-apache-spark-rdds-dataframes-using-pyspark/)

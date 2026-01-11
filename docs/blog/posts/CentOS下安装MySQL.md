@@ -1,7 +1,12 @@
 ---
 title: CentOS下安装MySQL
 date: 2017-03-28 22:49:21
+authors: 
+  - Tinker
 tags:
+  - 数据存储与中间件/Mysql
+categories:
+  - 数据存储与中间件
 ---
 
 # 配置yum源

@@ -1,10 +1,13 @@
 ---
 title: 'Improve the performance of your webapp: configure Nginx to cache'
 date: 2017-06-16 17:19:34
+authors: 
+  - Tinker
 tags:
-    - Nginx
-    - HTTP 
-    - HTTP Cache
+  - Web服务器/Nginx
+  - 性能调优
+categories:
+  - 工程实践与运维
 ---
 
 ![Nginx](https://www.theodo.fr/uploads/blog//2016/06/800px-Nginx_logo.svg_.png)

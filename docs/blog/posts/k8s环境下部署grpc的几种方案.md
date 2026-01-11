@@ -5,7 +5,11 @@ authors:
 tags:
   - grpc
   - k8s
-categories: []
+authors: 
+  - Tinker
+categories:
+  - 工程实践与运维
+  - 软件架构与设计
 date: 2021-11-09 17:23:00
 ---
 笔者前段时间负责所在广告部门的ssp系统核心的几个grpc服务由虚拟机部署迁移到k8s环境下的技术方案设计与实施。本篇博文就专门介绍下k8s环境的部署grpc几个方案。这里面不涉及具体实施细节。我们k8s环境是采用华为云的k8s集群服务，我们ssp系统都是go语言开发的，这里面的grpc专指grpc-go。

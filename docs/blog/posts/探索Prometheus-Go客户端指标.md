@@ -1,5 +1,5 @@
 ---
-title: 【译文】探索Prometheus Go客户端指标
+title: 探索Prometheus Go客户端指标
 authors: 
   - Tinker
 tags:

@@ -1,7 +1,10 @@
 ---
 title: 长连接，RPC，RESTful乱弹
 date: 2017-12-07 23:03:07
-tags:
+authors: 
+  - Tinker
+categories: 
+  - 笔记与随想
 ---
 
 今天学习到很多知识，混混沌沌的大脑有时候就得需要轻敲一下，才能醍醐灌顶。

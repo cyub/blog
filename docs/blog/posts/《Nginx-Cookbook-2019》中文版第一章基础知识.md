@@ -3,10 +3,9 @@ title: 《Nginx Cookbook 2019》中文版第一章基础知识
 authors: 
   - Tinker
 tags:
-  - Nginx
+  - Web服务器/Nginx
+categories: 
   - 翻译
-
-categories: []
 date: 2019-09-07 20:28:00
 ---
 ## 0.0 最前面话

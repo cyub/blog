@@ -4,7 +4,9 @@ authors:
   - Tinker
 tags:
   - Wireshark
-categories: []
+  - 抓包
+categories:
+  - 工程实践与运维
 date: 2020-12-06 17:59:00
 ---
 [Wireshark](https://www.wireshark.org/)是一款强大的抓包分析工具。它支持抓取分析TCP数据段、UDP数据包，应用层协议比如Http、Http2、Https(但不支持Https解密)、gRPC等。这里面列几个我使用过程中的用到的小技巧。

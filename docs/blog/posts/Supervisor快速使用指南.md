@@ -3,7 +3,12 @@ title: Supervisor快速使用指南
 authors: 
   - Tinker
 date: 2019-06-01 19:57:43
+authors: 
+  - Tinker
 tags:
+  - Supervisor
+categories:
+  - 工程实践与运维
 ---
 ## 简介
 

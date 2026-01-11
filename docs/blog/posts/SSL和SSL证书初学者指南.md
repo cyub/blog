@@ -1,5 +1,5 @@
 ---
-title: 【翻译】SSL和SSL证书初学者指南
+title: SSL和SSL证书初学者指南
 authors: 
   - Tinker
 tags:
@@ -9,6 +9,7 @@ tags:
   - TLS
 categories:
   - 翻译
+  - 编码与协议
 date: 2024-01-04 21:42:00
 ---
 **原文：** [SSL and SSL Certificates Explained For Beginners](https://www.steves-internet-guide.com/ssl-certificaates-explained/)

@@ -4,7 +4,10 @@ tags:
   - tmux
   - 终端复用
   - 效率神器
-categories: []
+authors: 
+  - Tinker
+categories:
+  - 工程实践与运维
 date: 2019-07-22 21:39:00
 ---
 Tmux是终端复用器（terminal multiplexer）的缩写。通过启动Tmux会话，然后在该会话中打开多个窗口，并且分屏形成矩形窗格，执行不同操作，能极大提高终端操作效率。tmux支持的特性有：

@@ -5,6 +5,8 @@ tags:
 categories:
   - 工程实践与运维
 date: 2018-12-06 22:21:00
+authors: 
+  - Tinker
 ---
 下面是我在使用docker过程中遇到的一些问题以及解答，现记录下来备查。
 

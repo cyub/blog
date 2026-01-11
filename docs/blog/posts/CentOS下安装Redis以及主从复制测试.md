@@ -2,10 +2,12 @@
 title: CentOS下安装Redis以及主从复制测试
 date: 2016-10-20 18:08:44
 tags:
-    - Redis
-    - Redis主从复制
-    - Redis系统服务
+    - 数据存储与中间件/Redis
     - Systemd
+authors: 
+  - Tinker
+categories:
+  - 数据存储与中间件
 ---
 Redis是一个高性能的key-value数据库，它支持丰富的数据类型，包括字符串(String), 哈希(Hash), 列表(list), 集合(sets)和有序集合(sorted sets)。本文将从源码安装Redis并配置成系统服务，最后进行主从复制测试，这个流程展开
 

@@ -2,8 +2,10 @@
 title: Go语言中调用time.Now()时有没有发生系统调用?
 authors: 
   - Tinker
-tags: []
-categories: []
+tags:
+  - 编程语言/Golang
+categories:
+  - 编程语言
 date: 2021-09-19 03:11:00
 ---
 在探究“Go语言中调用time.Now()时有没有发生系统调用?”这个问题之前，我们先复习下什么是系统调用。

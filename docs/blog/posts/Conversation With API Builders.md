@@ -1,8 +1,10 @@
 ---
 title: Conversation With API Builders
 date: 2016-09-13 21:55:37
-tags:
-    - API
+authors: 
+  - Tinker
+categories:
+  - 软件架构与设计
 ---
 
 原文链接：http://conversation.bigbinary.com/

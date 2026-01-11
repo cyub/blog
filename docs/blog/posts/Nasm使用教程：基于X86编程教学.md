@@ -6,8 +6,6 @@ tags:
   - 汇编
   - Nasm
   - X86
-  - 教程
-  - 翻译
   - 编程语言/Assembly
 categories:
   - 翻译
@@ -977,7 +975,7 @@ format: db      '%x%x%x%x',10,0
 
 ## 局部变量和堆栈帧
 
-首先，请阅读 [Eli Bendersky 的文章](Stack frame layout on x86-64 ) 那篇概述比我的简短笔记更完整。
+首先，请阅读 [Eli Bendersky 的文章](http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64/) 那篇概述比我的简短笔记更完整。
 
 调用函数时，调用者首先将参数放入正确的寄存器中，然后发出调用指令。超出寄存器覆盖的其他参数将在调用之前被压入堆栈。 call 指令将返回地址放在栈顶。所以如果你有这个函数:
 

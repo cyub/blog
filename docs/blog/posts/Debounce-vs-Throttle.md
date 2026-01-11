@@ -4,6 +4,10 @@ date: 2018-01-27 21:41:52
 tags:
     - Debounce
     - Throttle
+authors: 
+  - Tinker
+categories:
+  - 软件架构与设计
 ---
 
 `Debounce` 和 `Throttle`是javascript中两种手段来控制函数的执行，特别是事件的处理。

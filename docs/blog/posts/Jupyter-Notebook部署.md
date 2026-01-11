@@ -3,7 +3,10 @@ title: Jupyter Notebook部署
 tags:
   - Jupyter notebook
   - Devops
-categories: []
+authors: 
+  - Tinker
+categories:
+  - 工程实践与运维
 date: 2018-12-31 11:57:00
 ---
 [Jupyter Notebook](https://jupyter.org/) 是科学计算必备工具之一，它是一个开源的web应用程序，允许你创建和共享实时代码，可以用来进行数据清理和转换、统计建模、数据可视化、机器学习等等工作。

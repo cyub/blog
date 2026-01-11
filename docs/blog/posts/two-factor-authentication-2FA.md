@@ -7,6 +7,8 @@ tags:
     - 双因素认证
 authors: 
   - Tinker
+categories:
+  - 编码与协议
 ---
 
 英文原文:[two-factor authentication (2FA)](http://searchsecurity.techtarget.com/definition/two-factor-authentication)

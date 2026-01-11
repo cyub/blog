@@ -1,7 +1,12 @@
 ---
 title: Crontab使用完全指南
 date: 2018-11-14 23:22:24
+authors: 
+  - Tinker
 tags:
+  - Crontab
+categories:
+  - 工程实践与运维
 ---
 最近看了《[Better PHP Development](https://www.sitepoint.com/premium/books/better-php-development)》一书，里面第6章专门讲了`crontab`使用指南，事无巨细，几乎涉及到`crontab`用法的方方面面。一直以为以为自己对`crontab`用法非常熟悉了，看完之后才发现有些地方之前确实不知道。现把书中重要内容记录到博客中，以便后续查阅。
 

@@ -1,10 +1,12 @@
 ---
 title: Using PySpark to perform Transformations and Actions on RDD
 tags:
-  - spark
+  - 数据存储与中间件/Spark
   - pyspark
-  - python
-categories: []
+authors: 
+  - Tinker
+categories:
+  - 数据存储与中间件
 date: 2018-10-10 22:04:00
 ---
 

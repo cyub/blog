@@ -3,9 +3,9 @@ title: 《Nginx Cookbook 2019》中文版第二章高性能负载均衡
 authors: 
   - Tinker
 tags:
-  - Nginx
+  - Web服务器/Nginx
+categories: 
   - 翻译
-categories: []
 date: 2019-09-07 23:11:00
 ---
 ## 2.0 Introduction-简介

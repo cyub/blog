@@ -3,8 +3,9 @@ title: 《Nginx Cookbook 2019》中文版第三章流量管理
 authors: 
   - Tinker
 tags:
-  - Nginx
-categories: []
+  - Web服务器/Nginx
+categories: 
+  - 翻译
 date: 2019-10-02 21:43:00
 ---
 ## 3.0 Introduction

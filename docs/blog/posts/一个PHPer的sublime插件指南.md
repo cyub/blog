@@ -3,6 +3,7 @@ title: 一个PHPer的sublime插件指南
 date: 2017-08-26 12:30:26
 tags:
     - sublime
+    - 编程语言/PHP
 authors: 
   - Tinker
 categories: 

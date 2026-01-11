@@ -4,6 +4,10 @@ date: 2016-11-03 19:07:15
 tags:
     - Linux命令大全
     - Linux命令
+authors: 
+  - Tinker
+categories:
+  - 工程实践与运维
 ---
 ## 1. 文件与目录操作
 ### touch - 创建文件

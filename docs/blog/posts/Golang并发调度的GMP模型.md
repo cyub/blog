@@ -3,8 +3,11 @@ title: Golang并发调度的GMP模型
 authors: 
   - Tinker
 tags:
-  - GMP模型
-categories: []
+  - 编程语言/Golang
+  - 编程技巧
+categories:
+  - 编程语言
+  - 并发与系统编程
 date: 2020-08-29 20:35:00
 ---
 Golang的一大特色就是Goroutine。Goroutine是Golang支持高并发的重要保障。Golang可以创建成千上万个Goroutine来处理任务，将这些Goroutine分配、负载、调度到处理器上采用的是G-M-P模型。

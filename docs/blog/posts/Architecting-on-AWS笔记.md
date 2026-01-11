@@ -2,8 +2,10 @@
 title: Architecting on AWS笔记
 authors: 
   - Tinker
-tags: []
-categories: []
+tags:
+  - Aws
+categories:
+  - 软件架构与设计
 date: 2020-02-20 09:46:00
 ---
 春节期间，公司组织远程培训，请Aws讲师培训`Architecting on aws`，属于aws架构培训中级课程。以下内容是个人做的笔记。

@@ -4,6 +4,9 @@ authors:
   - Tinker
 date: 2020-07-26 20:01:25
 tags:
+  - Raft
+categories:
+  - 编码与协议
 ---
 ## 什么是分布式一致性
 

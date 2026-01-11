@@ -4,6 +4,13 @@ date: 2017-08-27 08:37:14
 tags:
     - 持续集成
     - 持续集成工具
+authors: 
+  - Tinker
+tags:
+  - 编程语言/PHP
+categories:
+  - 工程实践与运维
+  - 编程语言
 ---
 
 [deptrac](https://github.com/sensiolabs-de/deptrac)
