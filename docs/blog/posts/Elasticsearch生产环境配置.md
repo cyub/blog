@@ -3,10 +3,11 @@ title: Elasticsearch生产环境配置
 authors: 
   - Tinker
 tags:
-  - Elasticsearch优化
-  - 数据库/性能优化
+  - 数据存储与中间件/Elasticsearch
+  - 性能调优
 categories:
-  - Elasticsearch
+  - 数据存储与中间件
+  - 工程实践与运维
 date: 2020-10-07 17:45:00
 ---
 Elasticsearch在生产环境部署时候，我们需要考虑系统配置优化和Es本身配置优化，已达到能够发挥其最佳性能。本文是根据官方文档和个人工作实践总结出的生产环境配置。

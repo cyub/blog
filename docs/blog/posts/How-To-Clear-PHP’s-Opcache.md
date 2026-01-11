@@ -1,8 +1,13 @@
 ---
 title: How-To-Clear-PHP’s-Opcache
 date: 2017-04-05 22:36:33
+authors: 
+  - Tinker
 tags: 
-    - Opcache
+  - 编程语言/PHP
+  - Opcache
+categories: 
+  - 编程语言
 ---
 
 原文链接：https://ma.ttias.be/how-to-clear-php-opcache/

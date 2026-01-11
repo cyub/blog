@@ -1,13 +1,16 @@
 ---
-title: 【译文】Go 开发中我一定会用到的 7 种代码模式
+title: Go 开发中我一定会用到的 7 种代码模式
 authors: 
   - Tinker
 tags:
   - 代码模式
   - 函数选项
   - nil通道
+  - 编程语言/Golang
 categories:
   - 翻译
+  - 编程语言
+  - 软件架构与设计
 date: 2021-12-25 02:32:00
 ---
 原文：[7 Code Patterns in Go I Can’t Live Without](https://betterprogramming.pub/7-code-patterns-in-go-i-cant-live-without-f46f72f58c4b)

@@ -11,7 +11,7 @@ categories:
   - 翻译
 date: 2024-01-04 21:42:00
 ---
-**原文：** [SSL and SSL Certificates Explained For Beginners](www.steves-internet-guide.com/ssl-certificaates-explained/)
+**原文：** [SSL and SSL Certificates Explained For Beginners](https://www.steves-internet-guide.com/ssl-certificaates-explained/)
 
 **安全套接字层 (SSL，全称Secure Sockets Layer)** 和**传输层安全 (TLS，全称Transport Layer security)** 是通过计算机网络或链接提供安全通信的协议。它们通常用于网页浏览和电子邮件。在本教程中，我们将了解学习到：
 - TLS 和 SSL

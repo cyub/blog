@@ -3,10 +3,10 @@ title: CMake快速上手指南
 authors: 
   - Tinker
 tags:
-  - 构建工具
-  - CMake
+  - 构建工具/CMake
+  - 入门指南
 categories:
-  - 工具使用
+  - 工程实践与运维
 date: 2024-08-29 14:07:00
 ---
 CMake是一个跨平台的自动化构建系统，它使用配置文件（CMakeLists.txt）来生成标准的构建文件，如Unix的Makefile或Windows的Visual Studio工程文件。CMake旨在支持多平台源代码编辑和管理，并且可以用于管理复杂项目和大型代码库的构建过程。

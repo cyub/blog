@@ -3,9 +3,9 @@ title: Elasticsearch小技巧之版本号比较过滤筛选
 authors: 
   - Tinker
 tags:
-  - Elasiticsearch小技巧
+  - 数据存储与中间件/Elasticsearch
 categories:
-  - Elasticsearch
+  - 数据存储与中间件
 date: 2019-11-10 16:36:00
 ---
 安卓应用的版本信息分为版本名和版本号两部分。版本名是语义性版本，一般格式是`主版本号.次版本号.修订版本号`；版本号格式是数字。

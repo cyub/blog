@@ -4,7 +4,10 @@ tags:
   - Ansible
   - 配置管理
   - 自动化部署
-categories: []
+categories: 
+  - 工程实践与运维
+authors: 
+  - Tinker
 date: 2019-08-01 21:12:00
 ---
 [Ansible](https://docs.ansible.com)是配置管理工具，能够自动化部署，管理服务器。在实际工作中，我会用ansible来进行项目依赖的服务部署，比如nginx服务器，redis等部署。

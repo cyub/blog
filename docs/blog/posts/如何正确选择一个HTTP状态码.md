@@ -4,6 +4,11 @@ date: 2017-09-02 00:12:25
 tags:
     - HTTP状态码
     - RESTful
+categories:
+  - 编码与协议
+  - 软件架构与设计
+authors: 
+  - Tinker
 ---
 
 HTTP状态码(HTTP Status Code)是3位数字代码，用来表示服务器HTTP响应状态，它由`RFC2616` 规范定义的。所有状态码第一个数字代表其所属的状态分类。服务端返回响应数据时候，HTTP协议号和状态码作为`Response line`返回给客户端

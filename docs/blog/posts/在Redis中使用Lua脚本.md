@@ -3,9 +3,10 @@ title: 在Redis中使用Lua脚本
 authors: 
   - Tinker
 tags:
-  - Redis
-  - Lua
-categories: []
+  - 数据存储与中间件/Redis
+  - 编程语言/Lua
+categories: 
+  - 数据存储与中间件
 date: 2019-12-01 17:35:00
 ---
 ### 简介

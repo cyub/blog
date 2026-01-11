@@ -2,7 +2,11 @@
 title: 几种找到php.ini文件的方法
 date: 2018-03-04 21:34:40
 tags:
-    - PHP
+    - 编程语言/PHP
+categories:
+  - 编程语言
+authors: 
+  - Tinker
 ---
 查找`php.ini`文件所在路径几种方法：
 ## 1. 内置函数

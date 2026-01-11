@@ -1,9 +1,9 @@
 ---
-title: Docker使用过程中问题汇总（持续更新中）
+title: Docker使用过程中问题汇总
 tags:
   - Docker
-  - 问题汇总
-categories: []
+categories:
+  - 工程实践与运维
 date: 2018-12-06 22:21:00
 ---
 下面是我在使用docker过程中遇到的一些问题以及解答，现记录下来备查。
@@ -17,7 +17,7 @@ date: 2018-12-06 22:21:00
 ![](http://static.cyub.vip/images/201812/docker-image-layer.png)
 
 我们可以通过`docker inspect`查看镜像ID 和父层镜像ID
-<!-- more-->
+<!-- more -->
 
 ![](http://static.cyub.vip/images/201812/docker-inspect.jpg)
 

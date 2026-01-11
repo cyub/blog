@@ -1,8 +1,12 @@
 ---
 title: HTTP断点续传
 date: 2017-06-12 14:11:56
+authors: 
+  - Tinker
 tags:
-    - HTTP协议
+    - 编码与协议/HTTP
+categories: 
+  - 编码与协议
 ---
 
 ## 断点续传简介

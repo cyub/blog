@@ -4,6 +4,10 @@ authors:
   - Tinker
 date: 2022-05-09 03:04:24
 tags:
+  - 编程语言/Golang
+  - CGO
+categories: 
+  - 编程语言
 ---
 Go 提供一个名为`C`的伪包(pseudo-package)用来与 C/C++ 语言进行交互操作，这种Go语言与C语言交互的机制叫做 **CGO**。通过 CGO 我们可以在 Go 语言中调用 C/C++ 代码，也可以在 C/C++ 代码中调用Go语言。CGO 本质就是 Go 实现的 [FFI](https://en.wikipedia.org/wiki/Foreign_function_interface)（全称为Foreign function interface，用来描述一种编程语言编写的程序可以调用另一种编程语言编写的服务的机制）解决方案。
 

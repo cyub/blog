@@ -4,7 +4,8 @@ authors:
   - Tinker
 tags:
   - Awk
-categories: []
+categories: 
+  - 工程实践与运维
 date: 2019-10-04 22:17:00
 ---
 ## 简介

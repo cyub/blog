@@ -3,9 +3,11 @@ title: Elasticsearch内存占用分析与管理
 authors: 
   - Tinker
 tags:
-  - Elasticsearch内存占用
+  - 数据存储与中间件/Elasticsearch
+  - 性能调优
 categories:
-  - Elasticsearch
+  - 数据存储与中间件
+  - 工程实践与运维
 date: 2020-09-25 19:21:00
 ---
 Elasticsearch是基于JVM实现的，内存分配分为堆内(on-heap)和堆外(off-heapp)两部分。每部分的内存，可以用于不同目的的缓存，具体可以看下思维导图：

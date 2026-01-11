@@ -2,8 +2,11 @@
 title: Golang中信号处理
 authors: 
   - Tinker
-tags: []
-categories: []
+tags: 
+  - 编程语言/Golang
+  - 信号处理
+categories: 
+  - 编程语言
 date: 2020-09-20 18:40:00
 ---
 ### 什么是信号？

@@ -2,16 +2,22 @@
 title: 使用Robo自动生成Nginx虚拟主机配置
 date: 2017-11-21 19:21:44
 tags:
+  - Web服务器/Nginx
+categories: 
+  - 工程实践与运维
+authors: 
+  - Tinker
 ---
 
 在开发过程中，我们有时候是基于一个框架的脚手架来开发。先clone下来项目，然后配置Nginx或Apache服务器里面的虚拟主机，映射到当前项目。这个虚拟主机的配置可以由程序自动生成。
 
 流程如下：
+
 1. composer create-project tink/slim-skeleton:dev-master blog // 使用slim-skeleton创建blog项目
 2. cd blog // 切换到blog目录
 3. ngto park // 执行命令，配置虚拟主机。blog.local域名自动配置到当前blog项目。
 
-<!-- more-->
+<!-- more -->
 
 现提供一个基于[Robo](http://robo.li/)写的一个脚本,适用于linux环境。window环境的可自行更改。对于域名解析问题可以搭建本地dns服务，所有local后缀的域名全部解析到本地。或者直接blog.local写入hosts文件中。Mac系统的可以使用[Valet](https://d.laravel-china.org/docs/5.4/valet)，功能更全，使用更方便
 

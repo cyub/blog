@@ -9,6 +9,7 @@ tags:
   - 南北流量
 categories:
   - 翻译
+  - 软件架构与设计
 date: 2021-03-13 18:42:00
 ---
 ![](https://static.cyub.vip/images/202103/service_mesh.png)

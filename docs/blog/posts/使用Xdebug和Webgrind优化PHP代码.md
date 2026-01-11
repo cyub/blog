@@ -2,10 +2,14 @@
 title: 使用Xdebug和Webgrind优化PHP代码
 date: 2017-07-03 19:29:16
 tags:
-    - 性能优化
-    - PHP优化
+    - 性能调优
     - Xdebug
     - Webgrind
+    - 编程语言/PHP
+authors: 
+  - Tinker
+categories: 
+  - 工程实践与运维
 ---
 在PHP开发过程中找到并修复性能瓶颈（performance bottlenecks）往往是非常困难和耗时的。为了定位问题，我们可能会在疑似影响性能的代码的开始和结束之间打上标记点，计算时间差，来定位问题，CI框架提供的基准测试类就是这样工作，这种方式对小型项目起到方便快捷的作用，但对大项目往往吃力不讨好，好比在工业时代，却是用石器时代的工具。这时候我们可以借助Xdebug，webgrind这样的工具来定位到和可视化php代码中的性能瓶颈。
 

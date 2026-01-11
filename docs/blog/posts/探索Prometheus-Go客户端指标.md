@@ -4,8 +4,9 @@ authors:
   - Tinker
 tags:
   - Prometheus
+categories: 
   - 翻译
-categories: []
+  - 工程实践与运维
 date: 2021-11-06 13:32:00
 ---
 原文是 [Exploring Prometheus Go client metrics](https://povilasv.me/prometheus-go-metrics)，有删改。

@@ -1,7 +1,12 @@
 ---
 title: Caddy服务器部署实践
 date: 2017-03-12 11:03:08
+authors: 
+  - Tinker
 tags:
+  - Web服务器/Caddy
+categories: 
+  - 工程实践与运维
 ---
 
 Caddy是go语言编写的一款跨平台web服务器，支持window，linux，andorid等操作系统。

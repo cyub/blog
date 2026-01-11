@@ -8,8 +8,10 @@ tags:
   - X86
   - 教程
   - 翻译
+  - 编程语言/Assembly
 categories:
   - 翻译
+  - 编程语言
 date: 2022-07-01 15:21:00
 ---
 原文：[NASM Tutorial](https://cs.lmu.edu/~ray/notes/nasmtutorial/)

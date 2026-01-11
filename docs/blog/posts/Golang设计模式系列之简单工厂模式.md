@@ -5,8 +5,9 @@ authors:
 tags:
   - Golang设计模式系列
   - 编程语言/Golang
-categories:
   - 设计模式
+categories:
+  - 软件架构与设计
 date: 2020-06-22 23:08:00
 links:
   - blog/posts/Golang设计模式系列之工厂方法模式.md

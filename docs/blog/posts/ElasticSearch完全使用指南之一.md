@@ -3,9 +3,9 @@ title: ElasticSearch完全使用指南（一）
 authors: 
   - Tinker
 tags:
-  - 完全指南
+  - 数据存储与中间件/Elasticsearch
 categories:
-  - Elasticsearch
+  - 数据存储与中间件
 date: 2020-03-22 21:46:00
 ---
 ![ElasticSearch完全使用指南](https://static.cyub.vip/images/202005/es-logo.png)

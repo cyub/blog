@@ -5,7 +5,9 @@ authors:
 tags:
   - 分布式
   - 分布式ID
-categories: []
+categories: 
+  - 数据结构与算法
+  - 软件架构与设计
 date: 2020-02-01 17:26:00
 ---
 Snowflake算法(雪花算法)是由Twitter提出的一个分布式全局唯一ID生成算法，该算法生成一个64bit大小的长整数。64bit位ID结构如下：

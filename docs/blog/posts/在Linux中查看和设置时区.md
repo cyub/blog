@@ -4,6 +4,10 @@ date: 2018-01-17 23:47:00
 tags:
     - Linux配置
     - 时区
+authors: 
+  - Tinker
+categories: 
+  - 工程实践与运维
 ---
 
 在设置Linux时间时候，时区是一个很重要的部分。让我们来看如何查看和设置Linux系统的时区

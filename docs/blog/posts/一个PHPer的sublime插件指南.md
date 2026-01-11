@@ -3,7 +3,10 @@ title: 一个PHPer的sublime插件指南
 date: 2017-08-26 12:30:26
 tags:
     - sublime
-    - sublime插件
+authors: 
+  - Tinker
+categories: 
+  - 工程实践与运维
 ---
 作为一名PHPer，在开发(ban zhuan)过程中，没有一个犀利的编辑器怎么能行。sublime是我最喜欢的编辑器，具有强大的拓展功能，有许多丰富的插件支撑。
 

@@ -3,10 +3,11 @@ title: Golang设计模式系列开篇
 authors: 
   - Tinker
 tags:
+  - 设计模式
   - Golang设计模式系列
   - 编程语言/Golang
 categories:
-  - 设计模式
+  - 软件架构与设计
 date: 2020-05-23 18:04:00
 links:
   - blog/posts/Golang设计模式系列之工厂方法模式.md

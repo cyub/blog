@@ -7,6 +7,7 @@ tags:
   - Logrotate
 categories:
   - 翻译
+  - 工程实践与运维
 date: 2019-11-17 20:28:00
 ---
 原文：[How To Manage Log Files Using Logrotate In Linux](https://www.ostechnix.com/manage-log-files-using-logrotate-linux/)

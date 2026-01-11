@@ -3,10 +3,9 @@ title: 这可能是你最想要的一份GDB使用指南
 authors: 
   - Tinker
 tags:
-  - GDB
-  - 调试工具
+  - 调试工具/GDB
 categories:
-  - 工具使用
+  - 工程实践与运维
 date: 2021-03-22 11:28:00
 ---
 ## GDB简介

@@ -6,6 +6,9 @@ tags:
   - Docker
 categories:
   - 翻译
+  - 软件架构与设计
+authors: 
+  - Tinker
 date: 2018-05-12 09:34:00
 ---
 原文地址：[How to Build 12 Factor Microservices on Docker](https://hub.packtpub.com/how-to-build-12-factor-design-microservices-on-docker-part-1/)
