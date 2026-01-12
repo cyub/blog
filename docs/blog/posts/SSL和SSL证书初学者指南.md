@@ -15,6 +15,7 @@ date: 2024-01-04 21:42:00
 **原文：** [SSL and SSL Certificates Explained For Beginners](https://www.steves-internet-guide.com/ssl-certificaates-explained/)
 
 **安全套接字层 (SSL，全称Secure Sockets Layer)** 和**传输层安全 (TLS，全称Transport Layer security)** 是通过计算机网络或链接提供安全通信的协议。它们通常用于网页浏览和电子邮件。在本教程中，我们将了解学习到：
+
 - TLS 和 SSL
 - 公钥和私钥
 - 为什么我们需要证书以及它们的作用
@@ -33,10 +34,12 @@ SSL/TLS 提供数据加密、数据完整性和身份验证功能。这意味着
 - 你正在与预期的人（服务器）通信
 
 在两方之间发送消息时，你需要解决两个问题。
+
 - 你怎么知道没有人读过这条消息？
 - 你怎么知道没有人篡改过该消息？
 
 这些问题的解决办法是：
+
 - **对其进行加密(Encrypt it)** ： 这会使内容无法读取，因此对于查看该消息的任何人来说，它只是乱码。
 - **签名(Sign it)** ： 这可以让收件人确信是你发送的邮件，并且邮件未被篡改。
 
@@ -112,6 +115,7 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 通常，证书可在单个 **完全限定域名 (FQDN)** 上使用。也就是说，为在 www.mydomain.com 上使用而购买的证书不能在 mail.mydomain.com 或 www.otherdomain.com 上使用。但是，如果你需要保护多个子域以及主域名，那么你可以购买通配符证书。通配符证书涵盖特定域名下的所有子域。
 
 例如，*.mydomain.com 的通配符证书可用于：
+
 - mail.mydomain.com
 - www.mydomain.com
 - ftp.mydomain.com
@@ -144,10 +148,12 @@ DV验证过程通常是完全自动化的，这使得它们成为最便宜的证
 ## 数字证书的编码与扩展名
 
 证书可以编码为：
+
 - 二进制文件 (.DER)
 - base64格式文本文件 (.PEM)
 
 数字证书使用的常见文件扩展名是：
+
 - DER
 - PEM（隐私增强型电子邮件）
 - CRT
