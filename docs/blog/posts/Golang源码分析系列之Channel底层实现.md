@@ -8,6 +8,12 @@ tags:
 categories:
   - 源码分析
 date: 2020-11-04 11:48:00
+links:
+    - blog/posts/Golang源码分析之Map底层实现.md
+    - blog/posts/Golang源码分析系列之atomic底层实现.md
+    - blog/posts/Golang源码分析系列之sync-Map底层实现.md
+    - blog/posts/Golang源码分析系列之Channel底层实现.md
+    - blog/posts/Golang源码分析系列之官方Context包.md
 ---
 Golang中Channel是goroutine间重要通信的方式，是并发安全的，通道内的数据First In First Out，我们可以把通道想象成队列。这里面分析的源码基于[go1.13](https://github.com/golang/go/blob/release-branch.go1.13/src/runtime/chan.go)版本。
 
