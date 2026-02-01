@@ -3,12 +3,14 @@ window.MathJax = {
         inlineMath: [["\\(", "\\)"]],
         displayMath: [["\\[", "\\]"]],
         processEscapes: true,
-        processEnvironments: true
+        processEnvironments: true,
+        packages: { '[+]': ['boldsymbol', 'ams'] },
     },
     options: {
         ignoreHtmlClass: ".*|",
         processHtmlClass: "arithmatex"
-    }
+    },
+    loader: { load: ['[tex]/boldsymbol'] },
 };
 
 document$.subscribe(() => {
