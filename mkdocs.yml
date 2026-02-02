@@ -81,8 +81,8 @@ plugins:
       include: ["*.ipynb"]
   - glightbox
   - git-committers:
-      repository: cyub/read-notes
-      branch: main
+      repository: cyub/blog
+      branch: v2
   - markmap
   - rss:
       length: 1000
