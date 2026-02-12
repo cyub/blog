@@ -1,0 +1,18 @@
+[project]
+name = "blog"
+version = "0.1.0"
+description = "Stuff you should know, stuff I should remember"
+requires-python = ">=3.13.9"
+dependencies = [
+    "click==8.2.1",
+    "mkdocs>=1.6.1",
+    "mkdocs-charts-plugin>=0.0.13",
+    "mkdocs-git-committers-plugin-2>=2.5.0",
+    "mkdocs-git-revision-date-localized-plugin>=1.5.0",
+    "mkdocs-glightbox>=0.5.2",
+    "mkdocs-jupyter>=0.25.1",
+    "mkdocs-markmap>=2.5.2",
+    "mkdocs-mermaid2-plugin>=1.2.3",
+    "mkdocs-print-site-plugin>=2.8",
+    "mkdocs-rss-plugin>=1.17.4",
+]
