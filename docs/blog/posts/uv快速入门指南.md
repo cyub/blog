@@ -211,7 +211,7 @@ uv lock
 uv lock -r requirements.txt -o requirements.lock
 ```
 
-`uv sync` 是核心命令，确保本地环境与锁文件精确匹配，防止“在我的机器上能跑”问题。
+`uv sync` 是核心命令，该命令会读取 uv.lock 并在 .venv 目录中安装确切版本的依赖，确保本地环境与锁文件精确匹配，防止“在我的机器上能跑”问题。
 
 ### 运行与开发工具
 
