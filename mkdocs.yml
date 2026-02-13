@@ -74,15 +74,15 @@ plugins:
           case: lower
       tags_hierarchy: true
 
-  - git-revision-date-localized:
-      type: iso_date
-      enable_creation_date: true
+  # - git-revision-date-localized:
+  #     type: iso_date
+  #     enable_creation_date: true
   - mkdocs-jupyter:
       include: ["*.ipynb"]
   - glightbox
-  - git-committers:
-      repository: cyub/blog
-      branch: v2
+  # - git-committers:
+  #     repository: cyub/blog
+  #     branch: v2
   - markmap
   - rss:
       length: 1000
