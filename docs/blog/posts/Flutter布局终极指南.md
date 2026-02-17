@@ -198,7 +198,7 @@ Container 结合了多个其他组件，每个组件都有自己的布局行为�
 
 - 当你不指定 Container 的 `height` 和 `width` 时，它将匹配其 `child` 的大小。
 
-    ![](https://static.cyub.vip/images/202602/quKxub41I.webp)
+    ![](https://static.cyub.vip/images/202602/quKxub41I.png)
 
     ```dart
     Widget build(BuildContext context) {
@@ -577,7 +577,7 @@ Center(
 
 - MainAxisAlignment.spaceEvenly
 
-    ![](https://static.cyub.vip/images/202602/dUNBfQ-TV.webp)
+    ![](https://static.cyub.vip/images/202602/dUNBfQ-TV.png)
 
     ```dart
     Row /*or Column*/ (
