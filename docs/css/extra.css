@@ -35,7 +35,7 @@
 
 :root {
     --md-text-font: "LXGW WenKai", Roboto;
-    --md-code-font: "LXGW WenKai", Roboto Mono;
+    --md-code-font: "Fira Code", "Roboto Mono", "Source Code Pro", "JetBrains Mono", "LXGW WenKai";
 }
 
 .md-typeset {
