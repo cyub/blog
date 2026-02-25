@@ -43,7 +43,7 @@ OpenClaw 最大的创新在于**把技术门槛降到了零**。它不需要你�
 无需安装新 App、无需学 Prompt 工程、无需配置环境。一行命令安装：
 
 ```bash
-Bashcurl -fsSL https://openclaw.ai/install.sh | bash
+curl -fsSL https://openclaw.ai/install.sh | bash
 ```
 
 然后 `openclaw onboard` 即可。普通人用飞书发一句“帮我整理下周东京行程并订机票”，它就真去干了。
