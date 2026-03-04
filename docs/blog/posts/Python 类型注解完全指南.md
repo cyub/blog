@@ -10,8 +10,6 @@ categories:
 date: 2026-03-04 23:26:00
 ---
 
-![](https://static.cyub.vip/images/202603/python_type_hints_banner.png)
-
 ## 为什么要用类型注解？
 
 Python 是一门**动态类型语言**，变量类型在运行时才确定。这种灵活性带来了快速开发的优势，但也埋下了隐患：
@@ -37,17 +35,17 @@ result = calculate_total("100", "5")  # 结果是 "100100100100100"，而非 500
 
 <!-- more -->
 
-**关键观念：类型注解 ≠ 类型检查**
+!!! warning "关键观念：类型注解 ≠ 类型检查"
 
-```python
-def greet(name: str) -> str:
-    return f"Hello, {name}"
+    ```python
+    def greet(name: str) -> str:
+        return f"Hello, {name}"
 
-# 类型注解不会阻止运行时错误！
-greet(123)  # 完全合法，运行时会得到 "Hello, 123"
-```
+    # 类型注解不会阻止运行时错误！
+    greet(123)  # 完全合法，运行时会得到 "Hello, 123"
+    ```
 
-Python 解释器**完全忽略**类型注解。要获得类型检查能力，必须使用 **mypy**、**pyright** 等静态类型检查工具。
+    Python 解释器**完全忽略**类型注解。要获得类型检查能力，必须使用 **mypy**、**pyright** 等静态类型检查工具。
 
 ## 基础语法
 
