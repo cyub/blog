@@ -237,6 +237,7 @@ def apply_func(
 ```
 
 **迁移建议**：
+
 - 新项目直接使用 `list[int]`, `dict[str, int]`
 - 旧项目使用 `from __future__ import annotations`（Python 3.7+）提前使用新语法
 
@@ -256,6 +257,7 @@ def maybe_int(x: str) -> int | None:  # 替代 Optional[int]
 ```
 
 **优势**：
+
 - 更简洁，无需从 `typing` 导入
 - 可读性更强：`int | str | None` 直观表示"或"关系
 
