@@ -211,7 +211,7 @@ move('left')   # 正确
 ### 特殊类型
 
 ```python
-from typing import Any, NoReturn, Callable
+from typing import Any, NoReturn, Callable, Annotated
 
 # Any：表示任意类型（尽可能避免使用）
 def legacy_function(data: Any) -> Any:
@@ -230,12 +230,27 @@ def execute_callback(
 ) -> int:
     return callback(a, b)
 
+@dataclass
+class ValueRange:
+    lo: int
+    hi: int
+
+def say_hello(name: Annotated[str, "this is just metadata"]) -> str: # 传给 Annotated 的第一个类型参数才是实际类型。其余的只是给其他工具用的元数据
+    return f"Hello {name}"
+
 # 使用
 def add(x: int, y: int) -> int:
     return x + y
 
 result = execute_callback(add, 3, 4)  # 7
+
+T1 = Annotated[int, ValueRange(-10, 5)]
+T2 = Annotated[T1, ValueRange(-20, 3)]
+
+say_hello("Python")
 ```
+
+`Annotated` 用于向注解添加特定于上下文的元数据。使用注解 `Annotated[T, x]` 将元数据 `x` 添加到给定类型 `T` 。使用 `Annotated` 添加的元数据可以被静态分析工具使用，也可以在运行时使用。在运行时使用的情况下，元数据存储在 `__metadata__` 属性中。
 
 ### 泛型基础
 
