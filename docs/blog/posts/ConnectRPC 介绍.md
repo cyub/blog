@@ -6,7 +6,7 @@ date: 2026-03-05 22:30:30
 tags:
     - ConnectRPC
     - RPC
-    - 编程语言/Go
+    - 编程语言/Golang
 categories:
   - 编程语言
   - 工程实践与运维
