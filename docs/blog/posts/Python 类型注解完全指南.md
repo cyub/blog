@@ -144,6 +144,70 @@ def parse_value(value: str) -> Union[int, float, str]:
             return value
 ```
 
+### Liternal
+
+```python
+from typing import Literal
+
+# 限制变量只能是 'left' 或 'right'
+direction: Literal['left', 'right']
+
+def move(dir: Literal['left', 'right']):
+    print(f"Moving {dir}")
+
+move('left')   # 正确
+# move('up')    # 静态检查错误
+```
+
+!!! 注意
+    `Literal` 和  `Enum` 都能实现"限定取值范围"，但适用场景不同。
+
+    | 特性 | `Literal` | `Enum` |
+    |------|-----------|--------|
+    | **本质** | 类型注解（typing） | 类（运行时对象） |
+    | **验证时机** | 静态类型检查（mypy） | 运行时 |
+    | **运行时存在** | ❌ 不存在（被擦除） | ✅ 存在，可导入使用 |
+    | **方法/行为** | ❌ 无 | ✅ 可定义方法 |
+    | **反查/遍历** | ❌ 不支持 | ✅ 支持 |
+    | **适用场景** | 纯类型约束 | 需要运行时操作的常量 |
+
+
+    Literal 用于**纯类型注解**，只在类型检查时有意义，运行时不验证。
+
+    ```python
+    from typing import Literal
+
+    def set_status(status: Literal["pending", "success", "failed"]) -> None:
+        print(status)
+
+    # ✅ 静态检查通过
+    set_status("pending")
+
+    # ❌ mypy 报错，但运行时不报错！
+    set_status("invalid")  # 运行正常，mypy 会警告
+    ```
+
+    Enum 用于**运行时对象**，运行时做检验。
+
+    ```python
+    from enum import Enum
+
+    class Status(Enum):
+        PENDING = "pending"
+        SUCCESS = "success"
+        FAILED = "failed"
+
+    def set_status(status: Status) -> None:
+        print(status.value)
+
+    # ✅ 类型安全 + 运行时安全
+    set_status(Status.PENDING)
+
+    # ❌ 运行时报错！
+    set_status("pending")        # TypeError
+    set_status(Status("invalid")) # ValueError
+    ```
+
 ### 特殊类型
 
 ```python
