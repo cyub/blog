@@ -5,7 +5,8 @@ authors:
   - Tinker
 tags:
   - OpenClaw
-categories: 
+categories:
+  - 人工智能
   - 软件架构与设计
 ---
 
