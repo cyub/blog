@@ -197,6 +197,10 @@ uv add "requests>=2.28.0"  # 支持版本约束
 # 移除包
 uv remove numpy
 uv remove requests pandas
+
+# 如果已使用 uv pip install 装了一堆包，可以如下操作
+uv pip freeze > requirements.txt # 先导出到requirements.txt
+uv add -r requirements.txt # 然后写回到requirements.txt
 ```
 
 ### 同步与锁定
