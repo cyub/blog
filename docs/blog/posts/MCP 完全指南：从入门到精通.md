@@ -14,7 +14,9 @@ categories:
 
 ### MCP 的定义与价值
 
-**Model Context Protocol (MCP)** 是一个开源标准协议，用于连接 AI 应用程序与外部系统。它就像 **USB-C 接口** 一样，为 AI 应用提供了一种标准化的方式来连接数据源、工具和工作流。
+**MCP（Model Context Protocol，模型上下文协议）** 是一个开源标准协议，用于连接 AI 应用程序与外部系统。它就像 **USB-C 接口** 一样，为 AI 应用提供了一种标准化的方式来连接数据源、工具和工作流。
+
+![](https://static.cyub.vip/images/202603/mcp-simple-diagram.png)
 
 **MCP 能做什么？**
 
@@ -35,46 +37,56 @@ categories:
 
 ## 架构篇：理解核心设计
 
+MCP 采用客户端-服务器架构，其中 MCP 宿主（Host）——即像 [Claude Code](https://www.anthropic.com/claude-code) 或 [Claude Desktop](https://www.claude.ai/download) 这样的 AI 应用程序——负责与一个或多个 MCP 服务器建立连接。
+
+宿主通过为每个 MCP 服务器创建一个 MCP 客户端来实现这一点，每个 MCP 客户端与其对应的 MCP 服务器保持专用连接。
+
+使用 STDIO 传输机制的本地 MCP 服务器通常仅服务于单个 MCP 客户端，它通常称为 **"本地"MCP 服务器**，而使用 Streamable HTTP 传输机制的远程 MCP 服务器则可以同时服务于多个 MCP 客户端，它通常称为 **"远程"MCP 服务器**。
+
 ### 架构参与者
-
-MCP 采用 **客户端-服务器架构**，包含三个核心角色：
-
 
 ```mermaid
 graph TB
-    subgraph Host["MCP Host (AI应用如Claude Desktop)"]
-        direction LR
-        C1[MCP Client #1]
-        C2[MCP Client #2]
-        C3[MCP Client #3]
+    subgraph Host["MCP 宿主 (AI 应用程序)"]
+        Client1["MCP 客户端1"]
+        Client2["MCP 客户端2"]
+        Client3["MCP 客户端3"]
+        Client4["MCP 客户端4"]
     end
-    
-    S1[MCP Server A<br/>本地 STDIO]
-    S2[MCP Server B<br/>远程 HTTP]
-    S3[MCP Server C<br/>远程 HTTP]
-    
-    C1 <-->|专用连接| S1
-    C2 <-->|HTTP连接| S2
-    C3 <-->|HTTP连接| S3
-    
+
+    ServerA["MCP 服务器A - 本地<br/>(比如 文件系统)"]
+    ServerB["MCP 服务器B - 本地<br/>(比如数据库)"]
+    ServerC["MCP 服务器C - 远程<br/>(比如Sentry应用监控平台)"]
+
+    Client1 ---|"专有连接"| ServerA
+    Client2 ---|"专有连接"| ServerB
+    Client3 ---|"专有连接"| ServerC
+    Client4 ---|"专有连接"| ServerC
+
     style Host fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style C1 fill:#bbdefb,stroke:#1565c0
-    style C2 fill:#bbdefb,stroke:#1565c0
-    style C3 fill:#bbdefb,stroke:#1565c0
-    style S1 fill:#c8e6c9,stroke:#2e7d32
-    style S2 fill:#ffe0b2,stroke:#ef6c00
-    style S3 fill:#ffe0b2,stroke:#ef6c00
+    style Client1 fill:#bbdefb,stroke:#1565c0
+    style Client2 fill:#bbdefb,stroke:#1565c0
+    style Client3 fill:#bbdefb,stroke:#1565c0
+    style Client4 fill:#bbdefb,stroke:#1565c0
+    style ServerA fill:#ffe0b2,stroke:#ef6c00
+    style ServerB fill:#ffe0b2,stroke:#ef6c00
+    style ServerC fill:#c8e6c9,stroke:#2e7d32
 ```
 
-**关键概念：**
+MCP 采用 **客户端-服务器架构**，包含三个核心角色：
 
-- **MCP Host**: 协调和管理多个 MCP 客户端的 AI 应用程序
-- **MCP Client**: 与 MCP 服务器保持连接并获取上下文的组件（每个服务器对应一个客户端）
-- **MCP Server**: 向 MCP 客户端提供上下文的程序（可本地或远程运行）
+- **MCP Host（宿主）**：协调并管理一个或多个 MCP 客户端的 AI 应用程序
+- **MCP Client（客户端）**：负责与 MCP 服务器保持连接，并为 MCP 宿主获取上下文的组件
+- **MCP Server（服务器）**：向 MCP 客户端提供上下文的程序
 
 ### 双层架构设计
 
 MCP 由两个逻辑层组成：
+
+- **数据层（Data layer）**：定义基于 JSON-RPC 的客户端-服务器通信协议，包括生命周期管理以及核心原语（如 tools、resources、prompts 和 notifications）。
+- **传输层（Transport layer）**：定义支持客户端与服务器之间数据交换的通信机制和通道，包括传输层特定的连接建立、消息帧封装（message framing）和授权机制。
+
+从概念上讲，数据层是内层，而传输层是外层。
 
 ```mermaid
 graph TB
@@ -96,23 +108,77 @@ graph TB
     style Server fill:#f3e5f5,stroke:#6a1b9a
 ```
 
-### 传输层详解
+#### 数据层
 
-**STDIO 传输**：
+数据层实现了基于 [JSON-RPC 2.0](https://www.jsonrpc.org/) 的交换协议，定义了消息结构和语义。该层包括：
 
-- 使用标准输入/输出流进行进程间通信
-- 适用于本地 MCP 服务器（如文件系统服务器）
-- 最佳性能，无网络开销
-- 一对一连接（单服务器服务单客户端）
+- **生命周期管理（Lifecycle management）**：处理客户端与服务器之间的连接初始化、能力协商（capability negotiation）和连接终止
+- **服务器功能（Server features）**：使服务器能够提供核心功能，包括用于 AI 操作的 tools、用于上下文数据的 resources，以及用于与客户端交互模板的 prompts
+- **客户端功能（Client features）**：使服务器能够请求客户端从宿主 LLM 进行采样（sampling）、向用户获取输入（elicitation），以及向客户端发送日志消息
+- **实用功能（Utility features）**：支持额外的能力，如实时更新的通知（notifications）和长时运行操作的进度跟踪（progress tracking）
 
-**Streamable HTTP 传输**：
+#### 传输层
 
-- 使用 HTTP POST + Server-Sent Events (SSE)
-- 适用于远程 MCP 服务器（如 Sentry 平台）
-- 支持标准 HTTP 认证（Bearer Token、API Key）
-- 推荐 OAuth 获取认证令牌
-- 一对多连接（单服务器服务多客户端）
+传输层管理客户端与服务器之间的通信通道和身份认证。它负责处理连接建立、消息帧封装以及 MCP 参与者之间的安全通信。MCP 支持两种传输机制：
 
+- Stdio 传输（Stdio transport）：使用标准输入/输出流进行同一机器上本地进程之间的直接进程通信，提供最佳性能且无需网络开销。它只能一对一连接（单服务器服务单客户端）。
+- Streamable HTTP 传输（Streamable HTTP transport）：使用 HTTP POST 进行客户端到服务器的消息传输，并可选使用 Server-Sent Events（SSE）实现流式传输能力。该传输机制支持远程服务器通信，并支持标准 HTTP 认证方法，包括 bearer tokens、API keys 和自定义请求头。MCP 推荐使用 OAuth 来获取认证令牌。它支持一对多连接（单服务器服务多客户端）。
+
+传输层将通信细节从协议层抽象出来，使得在所有传输机制中都可以使用相同的 JSON-RPC 2.0 消息格式。
+
+### 能力协商
+
+MCP 采用**一种基于能力的协商机制（Capability Negotiation）**，客户端与服务端在初始化阶段会显式声明各自支持的功能。这些能力决定了在会话期间可用的协议特性与原语（primitives）。
+
+- 服务端会声明其能力，例如：资源订阅、工具支持、提示模板等
+- 客户端会声明其能力，例如：采样（sampling）支持、通知处理等
+- 双方在整个会话过程中必须遵守已声明的能力范围
+- 可以通过协议扩展机制协商额外的能力
+
+```mermaid
+sequenceDiagram
+    participant Host
+    participant Client
+    participant Server
+
+    Host->>+Client: 初始化客户端
+    Client->>+Server: 使用能力信息初始化会话
+    Server-->>Client: 返回支持的能力
+
+    Note over Host,Server: 已协商能力的活动会话
+
+    loop 客户端请求
+        Host->>Client: 用户或模型触发操作
+        Client->>Server: 发起请求（工具/资源）
+        Server-->>Client: 返回响应
+        Client-->>Host: 更新 UI 或返回给模型
+    end
+
+    loop 服务端请求
+        Server->>Client: 发起请求（采样）
+        Client->>Host: 转发给 AI
+        Host-->>Client: AI 响应
+        Client-->>Server: 返回响应
+    end
+
+    loop 通知
+        Server--)Client: 资源更新
+        Client--)Server: 状态变化
+    end
+
+    Host->>Client: 终止
+    Client->>-Server: 结束会话
+    deactivate Server
+```
+
+每一项能力都会解锁在会话期间可使用的特定协议功能。例如：
+
+- 已实现的服务端功能必须在服务端能力声明中进行公布
+- 若服务端需要发送资源订阅通知，则必须声明支持订阅能力
+- 调用工具（Tool）需要服务端声明工具能力
+- 采样（Sampling）功能需要客户端在其能力中声明支持
+
+这种能力协商机制确保客户端与服务端对可用功能有清晰一致的理解，同时也保证了协议具备良好的可扩展性。
 
 ## 服务器篇：三大核心原语
 
@@ -689,3 +755,4 @@ MCP 正在重新定义 AI 应用与外部世界的连接方式。通过标准化
 -  [MCP 架构概览](https://modelcontextprotocol.io/docs/learn/architecture)
 -  [MCP 服务器概念](https://modelcontextprotocol.io/docs/learn/server-concepts)
 -  [MCP 客户端概念](https://modelcontextprotocol.io/docs/learn/client-concepts)
+- [MCP 架构](https://modelcontextprotocol.io/specification/2025-11-25/architecture)
