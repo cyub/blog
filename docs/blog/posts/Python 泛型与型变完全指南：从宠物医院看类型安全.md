@@ -65,6 +65,8 @@ cat_cage = Cage[Cat](Cat())      # Cage[Cat]
 
 ### 为什么需要泛型
 
+核心是：类型复用 + 类型约束。
+
 没有泛型时，类型信息丢失：
 
 ```python
