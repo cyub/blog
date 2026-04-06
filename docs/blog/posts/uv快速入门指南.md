@@ -5,6 +5,7 @@ authors:
 tags:
   - 构建工具/uv
   - 入门指南
+  - 编程语言/Python
 categories:
   - 工程实践与运维
 date: 2025-11-29 11:05:00
