@@ -93,11 +93,11 @@ result = get_first([Dog(), Dog()])  # 类型推导：result 是 Dog
 
 在泛型 `Generic[T]` 中，设 `Dog` 是 `Animal` 的子类：
 
-| 型变类型 | 数学表达 | 通俗含义 | Python 语法 |
-|---------|---------|---------|------------|
-| **协变** (Covariant, +T) | `Dog <: Animal` ⇒ `Container[Dog] <: Container[Animal]` | 子类→父类（只读安全） | `TypeVar('T', covariant=True)` |
-| **逆变** (Contravariant, -T) | `Dog <: Animal` ⇒ `Container[Animal] <: Container[Dog]` | 父类→子类（只处理安全） | `TypeVar('T', contravariant=True)` |
-| **不变** (Invariant) | 无继承关系 | 必须完全匹配 | `TypeVar('T')`（默认） |
+| 型变类型 | 数学表达 | 类型兼容方向 | TypeVar 参数 | 适用场景 | 标准库示例
+|---------|---------|---------|------------|------------|------------|
+| **协变** (Covariant, +T) | `Dog <: Animal` ⇒ `Container[Dog] <: Container[Animal]` | 子类→父类（只读安全） | `TypeVar('T', covariant=True)` | 只读、返回值、生产者 | `Sequence[T]`、`Iterator[T]`
+| **逆变** (Contravariant, -T) | `Dog <: Animal` ⇒ `Container[Animal] <: Container[Dog]` | 父类→子类（只处理安全） | `TypeVar('T', contravariant=True)` | `Callable[[T], None]`
+| **不变** (Invariant) | 无继承关系 | 必须完全匹配 | `TypeVar('T')`（默认） | 只写、参数、消费者、回调 | `list[T]`、`dict[K, V]`
 
 ### 协变：只读的"病历档案"（Covariant）
 
@@ -203,6 +203,50 @@ def heal(patient: Treatable) -> None:
 heal(Dog())  # ✅ 静态检查通过，无需继承
 ```
 
+再看一个例子：
+
+```python
+from typing import Protocol
+
+class Speaker(Protocol):
+    def speak(self) -> str: ...
+
+class Dog:
+    def speak(self) -> str:  # 不需要继承 Speaker
+        return "woof"
+
+def make_sound(s: Speaker) -> None:
+    print(s.speak())
+
+make_sound(Dog())  # ✅ 静态检查通过，无需继承
+```
+
+### Protocol + 泛型：强大的抽象组合
+
+```python
+from typing import Protocol, TypeVar, Generic
+
+T = TypeVar("T")
+
+class Serializer(Protocol[T]):
+    def serialize(self, obj: T) -> str: ...
+
+class User:
+    def __init__(self, name: str):
+        self.name = name
+
+class UserSerializer:
+    def serialize(self, obj: User) -> str:
+        return f"User({obj.name})"
+
+def save_to_db(serializer: Serializer[User], user: User) -> None:
+    data = serializer.serialize(user)
+    print(f"Saving: {data}")
+
+# 使用
+save_to_db(UserSerializer(), User("Tom"))  # ✅
+```
+
 ### Protocol + 逆变：回调系统的类型安全
 
 在事件处理和回调系统中，逆变 Protocol 极其重要：
@@ -228,6 +272,8 @@ def register_dog_handler(h: Handler[Dog]) -> None:
 register_dog_handler(AnimalHandler())
 ```
 
+这实现了里氏替换原则在类型层面的精确表达：能接受父类型的处理器，一定能处理子类型。
+
 ## 第四部分：工程实践与设计模式
 
 ### 型变决策树
@@ -242,6 +288,11 @@ register_dog_handler(AnimalHandler())
 ```
 
 ### 标准库中的型变实例
+
+- 不变：list[T]、set[T]、dict[K, V] —— 可增删改，必须精确匹配。
+- 协变：Sequence[T]、Iterable[T]、Iterator[T]、Mapping[K, V] —— 只读，子类容器可替代。
+- 逆变：Callable[[Arg1, Arg2], Return] 的参数部分是逆变的（允许更宽松的父类参数）。
+- typing.Protocol + 协变/逆变：现代最佳实践，可实现“只读接口”与“只写接口”分离。
 
 ```python
 from typing import Callable, Iterator, Sequence
@@ -266,21 +317,141 @@ dog_ward: list[Dog] = [Dog()]
 
 ### API 设计最佳实践
 
-#### 不要这样写：
+在编写函数接口时，**参数类型应尽可能宽松（使用抽象基类）**，而**返回值类型应尽可能精确（使用具体类型）**。  
+这样能极大提升代码的灵活性、复用性和类型安全性，同时避免不必要的类型兼容问题。
+
+#### 不要过度使用具体可变容器作为参数
+
+**不要这样写**（常见反例）：
+
 ```python
 def process_patients(wards: list[Animal]) -> None: ...
+def update_scores(scores: dict[str, int]) -> None: ...
+def process_stream(lines: list[str]) -> None: ...
 ```
-问题：限制了输入类型（必须是 list），且 list 是不变的。
 
-#### 应该这样写：
+**问题**：
+
+- `list`、`dict` 等内置可变容器是**不变（Invariant）** 的，无法利用协变优势。
+- 限制了调用方：必须精确传入 `list`，而不能传入 `tuple`、自定义序列、生成器等。
+- 如果传入子类容器（如 `list[Dog]` 给期望 `list[Animal]` 的函数），静态检查器（如 mypy）会报类型不匹配。
+
+#### 推荐使用抽象只读类型（支持协变）
+
+**应该这样写**（推荐写法）：
+
 ```python
-from typing import Sequence
+from collections.abc import Sequence, Mapping, Iterable, Iterator
 
+# 只读序列（推荐替代 list）
 def process_patients(wards: Sequence[Animal]) -> None: ...
+
+# 只读映射（推荐替代 dict）
+def update_scores(scores: Mapping[str, int]) -> None: ...
+
+# 只需迭代（最宽松，推荐用于 for 循环场景）
+def process_stream(lines: Iterable[str]) -> None: ...
+
+# 需要迭代器（消耗型场景）
+def consume_iterator(it: Iterator[str]) -> None: ...
 ```
-优势：
-- 支持 list、tuple、自定义容器
-- `Sequence` 是协变的，灵活性更高
+
+**优势**：
+
+- **支持更多输入类型**：
+
+  - `Sequence[Animal]` 支持 `list[Animal]`、`tuple[Animal]`、自定义序列类，甚至 `str`（如果是字符序列时需注意）。
+  - `Mapping[str, int]` 支持 `dict[str, int]`、`collections.OrderedDict`、`types.MappingProxyType` 等所有只读映射。
+  - `Iterable[T]` 支持列表、元组、集合、生成器、文件对象等几乎所有可迭代对象。
+  - `Iterator[T]` 专门用于“一次性消耗”的迭代器场景（如 `iter()` 返回的对象）。
+
+- **利用协变（Covariant）提升灵活性**：
+
+  - `Sequence[T]`、`Iterable[T]`、`Mapping[K, V]` 在类型系统中被声明为**协变**。
+  - 因此 `Sequence[Dog]` 可以安全地传递给 `Sequence[Animal]`（子类容器可替代父类容器）。
+  - 这符合“只读”场景：函数只读取数据，不修改容器内容，类型替换是安全的。
+
+- **Python 3.9+ 推荐写法**（内置泛型支持）：
+  ```python
+  # Python 3.9+ 可以直接用 collections.abc，无需从 typing 导入
+  from collections.abc import Sequence, Mapping, Iterable
+
+  def process_patients(wards: Sequence[Animal]) -> None: ...
+  ```
+
+#### 更多实用示例对比
+
+**读取/处理数据场景（推荐 Sequence / Iterable）**：
+
+```python
+# 好：支持 list、tuple、range 等
+def calculate_total(prices: Sequence[float]) -> float:
+    return sum(prices)
+
+# 更好：如果只需要遍历，不需要索引和长度，用 Iterable 更宽松
+def log_all_items(items: Iterable[str]) -> None:
+    for item in items:
+        print(item)
+```
+
+**键值对处理场景（推荐 Mapping）**：
+
+```python
+# 好：支持 dict 和其他映射
+def apply_config(config: Mapping[str, str]) -> None:
+    for key, value in config.items():
+        ...
+
+# 注意：如果函数需要修改映射，应使用 MutableMapping（不变型变类型）
+from collections.abc import MutableMapping
+
+def update_config(config: MutableMapping[str, str]) -> None: ...
+```
+
+**迭代器专用场景（Iterator）**：
+
+```python
+def process_large_file(lines: Iterator[str]) -> None:
+    for line in lines:      # 消耗迭代器
+        if "error" in line:
+            break
+    # 迭代器已被消耗，后续无法再次遍历
+```
+
+**返回值场景（相反原则）**：
+
+- 返回值建议用具体类型（如 `list`、`dict`），因为调用方通常需要可写或精确行为。
+  ```python
+  def get_all_patients() -> list[Animal]: ...   # 返回具体 list，便于调用方 append
+  ```
+
+#### 为什么抽象类型更好？（结合型变）
+
+- **不变（list、dict）**：读 + 写都支持，必须类型精确匹配。适合内部实现或需要修改的场景。
+- **协变（Sequence、Iterable、Mapping）**：只读场景，允许子类替代父类，更灵活。
+- **不变的 Mutable 版本**（MutableSequence、MutableMapping）：需要修改时使用，但仍比内置 list/dict 更抽象。MutableMapping是字典的抽象接口，且由于可读可写，在泛型中表现为**不变型变**。
+
+**Python 官方与 mypy 推荐**：
+
+- 函数**参数**优先使用 `Iterable`、`Sequence`、`Mapping` 等抽象集合（只描述“需要什么能力”）。
+- 这体现了 Python 的“鸭子类型”哲学：关注对象能做什么，而不是它是什么。
+
+#### 避坑建议
+
+1. **字符串陷阱**：`str` 也是 `Iterable[str]` 和 `Sequence[str]`，如果不想接受单个字符串，可用 `Sequence[str]` 并在运行时检查 `not isinstance(lines, (str, bytes))`，或使用自定义 `Protocol`。
+2. **性能敏感场景**：`Iterable` 非常宽松，但可能隐藏多次迭代的问题（生成器只能迭代一次）。
+3. **需要长度/索引时**：用 `Sequence` 而非 `Iterable`。
+4. **需要修改时**：明确使用 `MutableSequence` 或 `MutableMapping`，避免意外。
+5. **类型检查器行为**：在 mypy / Pyright 中，使用抽象类型通常能获得更好的错误提示和更少的假阳性。
+
+**总结口诀**：
+
+- **只读 + 遍历** → `Iterable[T]`（最宽松）
+- **只读 + 需要索引/长度** → `Sequence[T]`
+- **只读键值对** → `Mapping[K, V]`
+- **可修改键值对** → `MutableMapping[K, V]`
+- **参数宽松，返回精确** → API 设计的黄金法则
+
 
 ### 泛型装饰器的型变处理
 
