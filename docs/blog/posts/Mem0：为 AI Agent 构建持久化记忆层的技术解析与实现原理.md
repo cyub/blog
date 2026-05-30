@@ -11,7 +11,7 @@ categories:
 
 ## Mem0 是什么？
 
-**Mem0** 是一个开源的 **AI 记忆层（Memory Layer）** 框架，专为大型语言模型（LLM）应用提供长期记忆能力。与简单的对话历史存储不同，Mem0 实现了语义理解、实体关系图谱、个性化偏好学习等高级记忆机制，使 AI 能够像人类一样"记住"用户、积累知识、并在多次会话中保持连续性。
+**Mem0** (发音为"mem-zero") 是一个开源的 **AI 记忆层（Memory Layer）** 框架，专为大型语言模型（LLM）应用提供长期记忆能力。与简单的对话历史存储不同，Mem0 实现了语义理解、实体关系图谱、个性化偏好学习等高级记忆机制，使 AI 能够像人类一样"记住"用户、积累知识、并在多次会话中保持连续性。
 
 其核心定位是介于传统 RAG（检索增强生成）与简单对话管理之间的**智能记忆中间件**，通过 **分层记忆架构（Tiered Memory Architecture）** 实现从短时记忆到长时记忆的完整生命周期管理。
 
@@ -124,6 +124,7 @@ MemoryObject = {
 当接收到新输入时，Mem0 执行以下算法流程：
 
 **步骤 1：实体识别与链接（NER & Entity Linking）**
+
 - 使用轻量级 LLM（本地 3B/7B 模型）提取候选实体
 - 与现有图数据库中的实体进行匹配（模糊匹配 + 向量相似度）
 - 消歧处理：区分"Apple（公司）"与"Apple（水果）"基于上下文向量
@@ -148,6 +149,7 @@ output_schema:
 ```
 
 **步骤 3：批量向量化与写入**
+
 - 新事实批量计算 Embedding（批处理优化，利用 GPU 并行）
 - 事务性写入：向量数据库 + 图数据库 + 关系型元数据表（PostgreSQL）保证一致性
 
@@ -191,15 +193,18 @@ def resolve_conflict(new_fact, candidate_facts):
 
 模拟人类记忆的 **艾宾浩斯遗忘曲线**，Mem0 采用指数衰减公式：
 
-```
-Relevance(t) = Importance_initial × e^(-λt) × Recall_boost
+$$
+Relevance(t)=Importance_{initial}\times e^{-\lambda t}\times Recall\_boost
+$$
 
-其中：
+上面公式参数说明：
 
-- λ (decay_rate): 遗忘速率（偏好记忆 λ=0.01，事实记忆 λ=0.05）
-- t: 时间差（天）
-- Recall_boost: 当记忆被成功检索时，重要性临时提升（强化学习）
-```
+- $Relevance(t)$：该条记忆在当前时间 $t$ 的相关度或活跃度
+- $Importance_{initial}$：记忆的初始重要性权重，通常由系统根据上下文或用户反馈预先设定
+- $e$：自然常数
+- $\lambda$：遗忘速率（Decay Rate）, 偏好记忆 $\lambda=0.01$，事实记忆 $\lambda=0.05$
+- $t$：自上次记忆被访问或创建以来的时间流逝值，单位天
+- $Recall\_boost$：召回增强因子。当记忆被成功激活或再次调用（Rehearsal）时，该值会给予记忆额外的权重补偿，使其衰减得更慢
 
 **分层存储策略**：
 
@@ -243,13 +248,19 @@ graph LR
 ```
 
 **RRF（Reciprocal Rank Fusion）公式**：
-```
-score(doc) = Σ weight_i / (rank_i(doc) + k)
+
+$$
+\text{RRF}(doc) = \sum_{i=1}^{k} \frac{1}{r_i(doc) + \alpha}
+$$
+
+RRF（Reciprocal Rank Fusion）的中文名称为倒数排名融合，该公式为每个文档计算其在各排序列表中排名的倒数之和（加上常数 $\alpha$），最终按此得分从高到低重新排序，实现多源排序结果的融合。
 
 其中：
-- weight_vector = 0.5, weight_graph = 0.3, weight_temporal = 0.2
-- k = 60 (平滑常数)
-```
+- $doc$ 表示一个文档（或结果项）
+- $k$ 是参与融合的排序列表总数
+- $r_i(doc)$ 是文档 $doc$ 在第 $i$ 个排序列表中的排名（通常从1开始）
+- $\alpha$ 是一个平滑常数（常用值为 $60$，也可根据场景调整，以避免排名靠后的项权重过小）
+
 
 **检索示例**：
 
