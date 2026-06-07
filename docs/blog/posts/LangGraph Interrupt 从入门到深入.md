@@ -50,6 +50,7 @@ date: 2026-06-06 11:20:00
 from langgraph.graph import StateGraph, START
 from langgraph.types import interrupt, Command
 from langgraph.checkpoint.memory import InMemorySaver
+from langchain_core.runnables import RunnableConfig
 from typing import TypedDict
 
 
@@ -74,7 +75,7 @@ graph = (
     .compile(checkpointer=InMemorySaver())
 )
 
-config = {"configurable": {"thread_id": "1"}}
+config: RunnableConfig = {"configurable": {"thread_id": "1"}}
 
 # 第一轮：执行到 interrupt 就暂停
 print("=== 第一轮 stream ===")
@@ -139,10 +140,6 @@ from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage, ToolMessage
 from langchain_core.tools import InjectedToolCallId
 from langchain_tavily import TavilySearch
-
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class State(TypedDict):
@@ -216,7 +213,7 @@ graph = graph_builder.compile(checkpointer=InMemorySaver())
 ### 使用方式
 
 ```python
-config = {"configurable": {"thread_id": "1"}}
+config: RunnableConfig = {"configurable": {"thread_id": "1"}}
 
 # 第一轮：触发 LLM 调用 human_assistance
 events = graph.stream(
@@ -329,6 +326,175 @@ def multi_step_review(state):
 
 每次恢复时节点从头执行，但依次经过每个 `interrupt`。注意这里的幂等性问题——如果中间有副作用（比如修改外部系统），重新执行时会重复执行。
 
+## 底层实现原理
+
+前面我们讲了"怎么用"，现在打开 LangGraph 源码看看"怎么实现"。理解了底层机制，前面所有看似"反直觉"的行为（节点重跑、必须 checkpointer、多个 interrupt 按顺序匹配 resume）就都顺理成章了。
+
+> 以下源码来自 `langgraph/types.py` 和 `langgraph/errors.py`（langgraph v1.x 系列）。
+
+### 1. interrupt 函数本体：就 30 行代码
+
+`interrupt()` 函数本身非常简短，去掉注释后核心逻辑如下：
+
+```python
+def interrupt(value: Any) -> Any:
+    from langgraph._internal._constants import (
+        CONFIG_KEY_CHECKPOINT_NS,
+        CONFIG_KEY_SCRATCHPAD,
+        CONFIG_KEY_SEND,
+        RESUME,
+    )
+    from langgraph.config import get_config
+    from langgraph.errors import GraphInterrupt
+
+    conf = get_config()["configurable"]
+    # 1. 取出本次任务的 scratchpad（草稿本）
+    scratchpad = conf[CONFIG_KEY_SCRATCHPAD]
+    # 2. 当前是节点内第几个 interrupt（从 0 计数）
+    idx = scratchpad.interrupt_counter()
+
+    # 3. 如果 scratchpad 里已有该位置的 resume 值，直接返回
+    if scratchpad.resume:
+        if idx < len(scratchpad.resume):
+            conf[CONFIG_KEY_SEND]([(RESUME, scratchpad.resume)])
+            return scratchpad.resume[idx]
+
+    # 4. 否则看看是否有"待消费"的 null resume 值
+    v = scratchpad.get_null_resume(True)
+    if v is not None:
+        assert len(scratchpad.resume) == idx
+        scratchpad.resume.append(v)
+        conf[CONFIG_KEY_SEND]([(RESUME, scratchpad.resume)])
+        return v
+
+    # 5. 都没有 → 抛 GraphInterrupt 异常暂停
+    raise GraphInterrupt((
+        Interrupt.from_ns(value=value, ns=conf[CONFIG_KEY_CHECKPOINT_NS]),
+    ))
+```
+
+里面有几个关键概念：
+
+| 概念 | 作用 |
+|------|------|
+| `scratchpad` | 当前任务（一次节点执行）的临时存储，记录已收集的 resume 值列表 |
+| `interrupt_counter()` | 同一节点内第几次调用 `interrupt`（0, 1, 2 ...），用来区分多个 interrupt |
+| `scratchpad.resume` | 本次任务已知的 resume 值列表（按 interrupt 出现顺序排列） |
+| `GraphInterrupt` | LangGraph 内部用于"暂停"的异常类 |
+
+### 2. GraphInterrupt：暂停的"信号"
+
+```python
+# langgraph/errors.py
+class GraphInterrupt(GraphBubbleUp):
+    """Raised when a subgraph is interrupted, suppressed by the root graph."""
+
+    def __init__(self, interrupts: Sequence[Interrupt] = ()) -> None:
+        super().__init__(interrupts)
+```
+
+注意它继承自 `GraphBubbleUp`——这是一类"会从子图一路冒泡到根图"的特殊异常。LangGraph 的执行引擎（Pregel runner）会专门捕获这类异常，把它当作"中断信号"而非"错误"。
+
+### 3. 一次完整的中断与恢复，发生了什么？
+
+把 `interrupt` 函数和 Pregel 执行引擎结合起来看，完整流程是这样的：
+
+#### 阶段 A：第一次执行（暂停）
+
+```
+graph.stream(input, config)
+  │
+  ├─► Pregel runner 从 checkpoint 读取 state
+  ├─► 把节点函数作为一个 "task" 调度执行
+  │     │
+  │     ├─► 为该 task 创建 scratchpad（resume=[], counter=0）
+  │     ├─► 进入节点函数
+  │     │     │
+  │     │     ├─► 执行到 interrupt(value)
+  │     │     │     ├─► idx = 0
+  │     │     │     ├─► scratchpad.resume 为空
+  │     │     │     ├─► 没有 null resume
+  │     │     │     └─► raise GraphInterrupt(Interrupt(value=...))
+  │     │     └─► 异常向上抛出
+  │     │
+  │     └─► runner 捕获 GraphInterrupt
+  │           ├─► 把 Interrupt 写入 checkpoint 的 pending tasks
+  │           └─► 把 task 标记为"未完成，等待 resume"
+  │
+  └─► 当前 super-step 结束，stream() 把 __interrupt__ 事件吐给客户端，generator 退出
+```
+
+关键点：**异常被 runner 吃掉了**，所以你的代码看不到异常，只会看到 `stream()` 提前返回。
+
+#### 阶段 B：第二次执行（恢复）
+
+```
+graph.stream(Command(resume=X), config)
+  │
+  ├─► Pregel runner 从 checkpoint 读取 state（包含 pending interrupts）
+  ├─► 看到入参是 Command(resume=X)，把 X 注入到对应 task 的 scratchpad
+  ├─► 重新调度该 task —— 注意是从节点函数入口重新调度
+  │     │
+  │     ├─► 创建新 scratchpad（resume=[], counter=0）
+  │     │   但 runner 会把 Command 里的 X 作为 "null resume" 注入进来
+  │     ├─► 进入节点函数（从头开始）
+  │     │     │
+  │     │     ├─► （interrupt 之前的所有代码再跑一次）
+  │     │     │
+  │     │     ├─► 执行到 interrupt(value)
+  │     │     │     ├─► idx = 0
+  │     │     │     ├─► get_null_resume() → 返回 X
+  │     │     │     ├─► scratchpad.resume = [X]
+  │     │     │     └─► return X       ← 不抛异常！
+  │     │     │
+  │     │     └─► 继续执行 interrupt 之后的代码 → 正常 return
+  │     │
+  │     └─► runner 拿到节点返回值，写回 checkpoint
+  │
+  └─► 图沿边继续执行后续节点 → stream() 正常吐出更多事件 → 结束
+```
+
+### 4. 为什么多个 interrupt 要靠"顺序"匹配？
+
+回到源码这两行：
+
+```python
+idx = scratchpad.interrupt_counter()  # 当前是第几个 interrupt
+if idx < len(scratchpad.resume):
+    return scratchpad.resume[idx]  # 按下标取对应 resume 值
+```
+
+如果一个节点里有 3 个 `interrupt`，那么三次 resume 后，`scratchpad.resume` 会是一个长度为 3 的列表：`[v0, v1, v2]`。第 N 次进入节点重跑时：
+
+- 第 0 个 interrupt → 返回 `resume[0]`
+- 第 1 个 interrupt → 返回 `resume[1]`
+- 第 2 个 interrupt → 还没有，抛 GraphInterrupt
+
+这就是为什么官方文档说"按 interrupt 在节点中出现的顺序匹配 resume 值"——本质是按 counter 下标匹配。
+
+也正因如此，**在节点中加入有条件的 interrupt 是危险的**：如果第一次执行走了 if 分支调用了 `interrupt`，恢复时走了 else 分支跳过了 `interrupt`，counter 会错位，导致后续 interrupt 拿到错误的 resume 值。**结构性原则：interrupt 的调用顺序在节点的多次执行中必须保持一致。**
+
+### 5. 为什么必须要 checkpointer？
+
+到这里答案就一目了然了：
+
+- 抛出 `GraphInterrupt` 时，runner 要把 `Interrupt` 对象写入 checkpoint
+- 第二次 `graph.stream(Command(resume=X), ...)` 时，runner 要从 checkpoint 读出 pending task、读出当时的 state，才能"接着上次的地方"重新调度
+- 如果没有 checkpointer，这些状态根本无处存放，调用 `interrupt` 时框架会直接报错
+
+### 6. 串起来：所有"奇怪"行为的根本解释
+
+| 现象 | 根本原因 |
+|------|----------|
+| 节点函数 resume 时从头重跑 | 因为 Pregel runner 的执行单元是"task"，task 失败/中断后只能重跑整个 task，不能恢复 Python 调用栈 |
+| `interrupt()` 第一次抛异常、之后正常返回 | scratchpad 里有没有匹配下标的 resume 值决定了走哪条分支 |
+| 多个 interrupt 按顺序匹配 | 用 counter 作为下标取 resume 列表 |
+| 必须有 checkpointer | Interrupt 和 task 状态要落盘才能跨调用恢复 |
+| 中断不闭合不能换话题 | pending interrupt 占着 checkpoint 中的 task 槽位，且 message 序列里有未配对的 tool_call |
+| 同一节点的副作用会重复 | 节点重跑机制使然，框架无法判断哪些代码是副作用 |
+
+理解了这个执行模型，你不仅能用好 interrupt，还能在出问题时知道往哪儿查——比如卡住时去 `get_state()` 看 pending tasks，把整个执行过程当作"一系列可重放的 task"来思考，问题就清晰多了。
+
 
 ## 6 个核心疑问（FAQ）
 
@@ -381,7 +547,7 @@ def safe_node(state):
 - **彻底丢弃线程**：`graph.delete_state(config)` 删除整个 checkpoint（部分 backends 支持）
 
 
-## 七、原理速览
+## 原理速览
 
 ```
 graph.stream(input, config)
@@ -407,9 +573,9 @@ graph.stream(Command(resume=X), config)
       └─→ stream() 正常结束
 ```
 
-核心就是 **GraphInterrupt 异常** + **checkpoint 状态持久化**。
+核心就是 **GraphInterrupt 异常** + **checkpoint 状态持久化** + **scratchpad 顺序匹配 resume 值** 三件套。
 
-## 八、总结
+## 总结
 
 | 特性 | 说明 |
 |------|------|
