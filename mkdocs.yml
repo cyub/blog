@@ -172,6 +172,8 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - pymdownx.blocks.caption
+  - markdown_captions
 
 nav:
   - 首页: index.md
