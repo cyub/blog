@@ -108,6 +108,15 @@ extra:
     - icon: fontawesome/brands/golang
       link: https://go.cyub.vip
       name: 《深入Go语言之旅》
+    - icon: material/notebook-multiple
+      link: https://note.cyub.vip
+      name: 我的阅读笔记
+    - icon: fontawesome/solid/code
+      link: https://clang.cyub.vip
+      name: 《C语言生存手册》
+    - icon: fontawesome/brands/python
+      link: https://python.cyub.vip
+      name: 《Python入门指南》
     - icon: fontawesome/brands/github
       link: https://github.com/cyub
       name: 个人Github
