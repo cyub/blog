@@ -13,7 +13,6 @@ categories:
 date: 2026-06-13 10:15:00
 ---
 
-# 语音 AI 与语音智能体：图解入门指南
 
 原文：[Voice AI & Voice Agents: An Illustrated Primer](https://voiceaiandvoiceagents.com/)
 
@@ -70,7 +69,7 @@ LLM 也很擅长把非结构化信息转换为结构化数据[^1]。
 5.  音频输出被发送回用户。
 
 ![如今几乎所有生产级语音 AI 智能体的架构
-](https://voiceaiandvoiceagents.com/images/Figure%200200.svg)
+](https://static.cyub.vip/images/202606/Figure%200200.svg)
 
 你会注意到，语音智能体程序运行在云端，文本转语音、LLM 和语音转文本处理也都发生在云端。从长期看，我们预计会有更多 AI 工作负载运行在设备端。不过今天，**生产级语音 AI 仍然高度以云为中心**，原因有二：
 
@@ -132,7 +131,7 @@ Opus 解码 | 1
 macOS 扬声器输出 | 15
 总计 ms | 993
 
-![](https://voiceaiandvoiceagents.com/images/Figure%200300.svg)
+![](https://static.cyub.vip/images/202606/Figure%200300.svg)
 
 我们曾演示过 Pipecat 智能体，通过把所有模型托管在同一个 GPU 集群内，并将所有模型针对延迟而非吞吐优化，实现 500ms 的语音到语音延迟。这种方法今天还未被广泛使用。托管模型很昂贵。而且在语音 AI 中，开放权重 LLM 的使用频率低于 GPT-4o 或 Gemini 这类最好的专有模型。下一节会讨论语音智能体中的 LLM。
 
@@ -236,7 +235,7 @@ Google Multimodal Live API 是另一个很有前景、但仍处于早期演进�
 
 我们预计 2025 年 speech-to-speech 方向会有大量进展。但生产级语音 AI 应用会多快从多模型方法迁移到 speech-to-speech API，仍是一个开放问题。
 
-![OpenAI Realtime API 成本计算器](https://voiceaiandvoiceagents.com/images/Figure%200700%20Spreadsheet.png)
+![OpenAI Realtime API 成本计算器](https://static.cyub.vip/images/202606/Figure%200700%20Spreadsheet.png)
 
 
 ### 4.3. 语音转文本
@@ -454,7 +453,7 @@ Cartesia API 返回的词级时间戳：
 
 但有时这些低层软件不会按我们的期望工作。尤其是蓝牙设备可能会给语音输入增加几百毫秒延迟。作为语音 AI 开发者，这在很大程度上超出你的控制。但值得意识到，延迟会因特定用户的操作系统和输入设备而有很大差异。
 
-![蓝牙有问题？一直如此。](https://voiceaiandvoiceagents.com/images/Figure%201600.jpg)
+![蓝牙有问题？一直如此。](https://static.cyub.vip/images/202606/Figure%201600.jpg)
 
 多数音频采集流水线会对输入信号应用一定程度的自动增益控制。同样，这通常是你想要的，因为它可以补偿用户距离麦克风远近等因素。你通常可以禁用一部分自动增益控制，但在消费级设备上通常无法完全禁用。
 
@@ -549,7 +548,7 @@ pipeline = Pipeline([
 
 #### 4.6.1 WebSockets 与 WebRTC
 
-![WebSocket vs WebRTC 图示](https://voiceaiandvoiceagents.com/images/Figure%201900.svg)
+![WebSocket vs WebRTC 图示](https://static.cyub.vip/images/202606/Figure%201900.svg)
 
 AI 服务都会使用 WebSockets 和 WebRTC 进行音频流传输。
 
@@ -600,7 +599,7 @@ HTTP 的两个缺点是延迟，以及实现长期存在的双向连接很困难
 
 一个同时使用 HTTP 和 WebRTC 进行网络通信的语音 AI 智能体：
 
-![HTTP API 图示](https://voiceaiandvoiceagents.com/images/Figure%202200.svg)
+![HTTP API 图示](https://static.cyub.vip/images/202606/Figure%202200.svg)
 
 
 #### 4.6.3 QUIC 与 MoQ
@@ -623,7 +622,7 @@ IETF Media over QUIC 工作组[^25]旨在开发一种“用于媒体采集和分
 
 例如，从英国用户到 AWS us-west-1（北加州）服务器的往返包时间通常约为 140ms。相比之下，同一用户到 AWS eu-west-2 的 RTT 通常为 15ms 或更低。
 
-![边缘路由图示](https://voiceaiandvoiceagents.com/images/Figure%202300.svg)
+![边缘路由图示](https://static.cyub.vip/images/202606/Figure%202300.svg)
 
 英国用户到 AWS us-west-1 的 RTT 比到 AWS eu-west-2 多约 100ms
 
@@ -641,7 +640,7 @@ IETF Media over QUIC 工作组[^25]旨在开发一种“用于媒体采集和分
 
 这种边缘路由可以降低中位包 RTT。英国 → 北加州通过私有骨干网的路由可能约为 100ms。100ms（长距离私有路由）+ 15ms（公共互联网第一跳）= 115ms。这个私有路由中位 RTT 比公共路由中位 RTT 好 25ms。
 
-![边缘路由图示](https://voiceaiandvoiceagents.com/images/Figure%202400.svg)
+![边缘路由图示](https://static.cyub.vip/images/202606/Figure%202400.svg)
 
 从英国到 AWS us-west-1 的边缘路由。通过公共网络的第一跳 RTT 仍为 15ms。但经私有网络到北加州的长路径 RTT 为 100ms。总 RTT 为 115ms，比英国到 us-west-1 的公共路由快 25ms。它的可变性也显著更低（丢包更少、抖动更低）。
 
@@ -650,7 +649,7 @@ IETF Media over QUIC 工作组[^25]旨在开发一种“用于媒体采集和分
 这意味着，经过长距离公共路由的实时媒体连接，会比使用私有路由的连接明显更卡顿。回想一下，我们试图尽快交付每个音频包，但必须按顺序播放音频包。单个延迟包会迫使我们扩大抖动缓冲区，在延迟包到达之前保留其他已收到的包（或者直到我们决定它耗时太久，然后用高级数学或有毛刺的音频样本填补空缺）。
 
 ![抖动缓冲区——更大的抖动缓冲区会直接转化为音频和视频中更大的感知延迟。尽可能保持抖动缓冲区较小，对良好用户体验有显著贡献。
-](https://voiceaiandvoiceagents.com/images/Figure%202500%20Figure%204.w.svg)
+](https://static.cyub.vip/images/202606/Figure%202500%20Figure%204.w.svg)
 
 
 好的 WebRTC 基础设施提供商会提供边缘路由。他们应能向你展示服务器集群位置，并提供展示其私有路由性能的指标。
@@ -677,7 +676,7 @@ _轮次检测_ 指判断用户何时说完并期望 LLM 回应。
 
 语音 AI 中最常用的 VAD 模型是 [Silero VAD](https://github.com/snakers4/silero-vad)。这个开源模型在 CPU 上高效运行，支持多语言，对 8kHz 和 16kHz 音频都表现良好，并提供 wasm 包可在 Web 浏览器中使用。在实时单声道音频流上运行 Silero，通常消耗不到典型虚拟机 CPU 核心的 1/8。
 
-![一个语音活动检测处理步骤，这里配置为在语音转文本之前运行](https://voiceaiandvoiceagents.com/images/4x.svg)
+![一个语音活动检测处理步骤，这里配置为在语音转文本之前运行](https://static.cyub.vip/images/202606/4x.svg)
 
 轮次检测算法会有几个配置参数：
 
@@ -900,7 +899,7 @@ SOTA LLM 在函数调用方面稳步变好，但语音 AI 用例往往会把 LLM
 
 每次用户说完话时，你都需要提供相当快的音频反馈。如果你知道函数调用可能需要很长时间返回，可能需要输出语音告知用户正在发生什么，并请他们等待。
 
-![包含函数调用的推理 TTFT](https://voiceaiandvoiceagents.com/images/4ad.svg)
+![包含函数调用的推理 TTFT](https://static.cyub.vip/images/202606/4ad.svg)
 
 包含函数调用的推理 TTFT。LLM TTFT 为 450ms，吞吐为每秒 100 tokens。如果函数调用请求 chunk 为 100 tokens，输出函数调用请求需要 1s。随后我们执行函数并再次运行推理。这一次可以流式输出，因此 450ms 后获得可用的首批 token。完整推理的 TTFT 为 1,450ms（不包括执行函数本身所需时间）。
 
@@ -991,7 +990,7 @@ function call response: { status: IN_PROGRESS }
 *   把函数调用代理到客户端。这种模式适用于应用（非电话）场景。例如，想象一个 get_location() 函数。你想获取用户设备当前位置，因此需要接入该设备上的地理位置查询 API。
 *   把函数调用代理到网络端点。这在企业场景中通常特别有用。定义一组与内部 API 交互的函数。然后在代码中创建一个抽象，把这些函数调用作为 HTTP 请求执行。
 
-![函数调用模式](https://voiceaiandvoiceagents.com/images/4ae.svg)
+![函数调用模式](https://static.cyub.vip/images/202606/4ae.svg)
 
 #### 4.10.6 异步函数调用
 
@@ -1118,7 +1117,7 @@ _一小时前相当于近一百万 token。_ 即使你的模型可以容纳一�
 *   一个非常大的知识库，包括数据表、制造商建议、价格，以及目录中每个零件的内部数据。
 *   与真人支持代理的文本聊天记录、邮件链和电话转录。
 
-![为特定对话主题使用微调模型。可以有多种架构方法。本例中，每轮对话开始时，router LLM 会对完整上下文进行分类。](https://voiceaiandvoiceagents.com/images/5a.svg)
+![为特定对话主题使用微调模型。可以有多种架构方法。本例中，每轮对话开始时，router LLM 会对完整上下文进行分类。](https://static.cyub.vip/images/202606/5a.svg)
 
 
 把这些原始数据转换为用于微调模型的数据集是一项很大的工作，但可处理。所需的数据清洗、数据集创建、模型训练和模型评估都是被充分理解的问题。
@@ -1177,7 +1176,7 @@ _内容护栏_是试图检测这些问题的代码的通用术语——既保护
 *   llama-guard 是 Meta [llama-stack](https://github.com/facebookresearch/llama-stack) 的一部分
 *   [NeMO Guardrails](https://github.com/NVIDIA/NeMo-Guardrails) 是一个开源工具包，用于为基于 LLM 的对话应用添加可编程护栏
 
-    ![NVIDIA NeMo Guardrails 框架支持的五类护栏。图来自 NeMo Guardrails 文档](https://voiceaiandvoiceagents.com/images/5b.svg)
+    ![NVIDIA NeMo Guardrails 框架支持的五类护栏。图来自 NeMo Guardrails 文档](https://static.cyub.vip/images/202606/5b.svg)
 
 这两个框架都是面向文本聊天设计的，而不是语音 AI。但两者都有有用的想法和抽象，如果你在思考护栏、安全和内容审核，值得看看。
 
@@ -1277,7 +1276,7 @@ LLM 在多轮会话中基于用户反馈调整行为的示例（上下文学习�
 
 状态图以 JSON 表示，并可以加载到 Pipecat 进程中。还有一个用于创建这些 JSON 状态图的图形编辑器。
 
-![Pipecat Flows 图形编辑器](https://voiceaiandvoiceagents.com/images/6a.png)
+![Pipecat Flows 图形编辑器](https://static.cyub.vip/images/202606/6a.png)
 
 Pipecat Flows 和状态机目前正在获得大量开发者采用。但对于复杂工作流抽象的构建，还有其他有趣思路。
 
@@ -1326,7 +1325,7 @@ _Eval_ 是机器学习术语，指评估系统能力并判断其质量的工具�
 
 为语音 AI 用例提供复杂工具的评估平台刚刚开始出现。三个较早投入音频 evals 特定工作流和工具的平台是 [Coval](https://coval.dev/)、[FreePlay](https://freeplay.ai/) 和 [Weights & Biases Weave](https://wandb.ai/site/weave/)。三者都有不错的 Pipecat 集成。
 
-![Coval evals 平台 UI 截图](https://voiceaiandvoiceagents.com/images/7a.jpg)
+![Coval evals 平台 UI 截图](https://static.cyub.vip/images/202606/7a.jpg)
 
 
 这些平台可以帮助：
@@ -1455,12 +1454,12 @@ llm.register_function("query_order_system", query_order_system)
 
 [这里有一个交互式成本计算器](https://www.livetok.io/cost-calculator)，由 [Gustavo Garcia](https://twitter.com/anarchyco) 开发。
 
-![交互式成本计算器](https://voiceaiandvoiceagents.com/images/livetok-cost-calculator.png)
+![交互式成本计算器](https://static.cyub.vip/images/202606/livetok-cost-calculator.png)
 
 
 或者，如果你更喜欢电子表格，[这里有一张电子表格](https://docs.google.com/spreadsheets/d/1-B3nv7fhwEoFmDs-phm280XK9phTep0qfyLKRNsEwVE/edit?gid=0#gid=0)，你可以复制并用作计算每分钟成本的起点。
 
-![用于计算语音 AI 智能体每分钟成本的电子表格](https://voiceaiandvoiceagents.com/images/Figure%203000%20General%20Costs.png)
+![用于计算语音 AI 智能体每分钟成本的电子表格](https://static.cyub.vip/images/202606/Figure%203000%20General%20Costs.png)
 
 电子表格截图中的数字针对一个使用 Deepgram、GPT-4o 和 Cartesia 的自托管智能体。对于十分钟会话，每分钟成本约为两分半美分。转录和 LLM 推理各占约四分之一成本。语音生成约占一半成本。托管不到 1%。
 
