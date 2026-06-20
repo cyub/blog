@@ -165,7 +165,7 @@ date: 2026-06-20 09:10:00
 *   一个用于解决 [SWE-bench 任务](https://www.anthropic.com/research/swe-bench-sonnet)的编程智能体，这些任务涉及根据任务描述对许多文件进行编辑；
 *   我们的[“计算机使用”参考实现](https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo)，其中 Claude 使用计算机来完成任务。
 
-![编程智能体的高级流程](https://static.cyub.vip/images/202606/4b9a1f4eb63d5962a6e1746ac26bbc857cf3474f-2400x1666.png&w=3840&q=75)
+![编程智能体的高级流程](https://static.cyub.vip/images/202606/4b9a1f4eb63d5962a6e1746ac26bbc857cf3474f-2400x1666.webp)
 
 ## 组合和定制这些模式
 
