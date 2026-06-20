@@ -40,6 +40,7 @@
 
 .md-typeset {
     font-feature-settings: "kern" 0;
+    font-size: .9rem;
 }
 
 .md-typeset #references,
@@ -60,6 +61,7 @@
 
 nav.md-tabs ul.md-tabs__list li.md-tabs__item.md-tabs__item--active {
     font-weight: 700;
+    font-size: .8rem;
 }
 
 .md-typeset h1 {
@@ -138,4 +140,8 @@ nav.md-tabs ul.md-tabs__list li.md-tabs__item.md-tabs__item--active {
 
 .md-typeset .footnote hr {
     margin-top: 0.2em;
+}
+
+.md-nav {
+    font-size: .8rem;
 }
