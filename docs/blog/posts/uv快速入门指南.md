@@ -277,6 +277,132 @@ uv sync
 
 这个流程从零到运行只需几秒钟，uv 会自动处理环境创建和依赖解析。
 
+## 生产环境部署
+
+uv 不仅适合本地开发，其高效、确定性的依赖管理使其在生产部署中同样出色。以下是容器化和 CI/CD 场景中的最佳实践。
+
+### 容器化部署（Docker）
+
+uv 提供了官方精简镜像 `ghcr.io/astral-sh/uv`，可用于多阶段构建，显著减小最终镜像体积并提升构建速度。
+
+```dockerfile
+# 阶段一：使用 uv 镜像准备依赖
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+
+WORKDIR /app
+
+# 利用 Docker 缓存：仅当依赖文件变化时才重新解析
+COPY pyproject.toml uv.lock ./
+
+# 生产环境同步：--no-dev 排除开发依赖，--frozen 确保严格使用 uv.lock
+RUN uv sync --no-dev --frozen
+
+# 阶段二：最小化运行镜像
+FROM python:3.12-slim-bookworm
+
+WORKDIR /app
+
+# 从 builder 阶段复制已安装好的依赖
+COPY --from=builder /app/.venv /app/.venv
+
+# 将虚拟环境的 bin 目录加入 PATH
+ENV PATH="/app/.venv/bin:$PATH"
+
+COPY . .
+
+CMD ["python", "-m", "myapp"]
+```
+
+关键说明：
+
+- `--no-dev`：仅安装运行时依赖，排除 ruff、pytest 等开发工具，减少攻击面和镜像体积。
+- `--frozen`：禁止更新 `uv.lock`，若锁文件与 `pyproject.toml` 不一致则直接报错，防止生产环境出现非预期依赖变更。
+- 多阶段构建：最终镜像无需包含 uv 工具本身，只需 Python 运行时和 `.venv` 内容。
+
+若追求极致精简，也可在单阶段容器内使用系统级 Python，省去虚拟环境层：
+
+```dockerfile
+FROM python:3.12-slim-bookworm
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN uv pip install --system --no-dev -r pyproject.toml
+
+COPY . .
+CMD ["python", "-m", "myapp"]
+```
+
+这里 `--system` 将包直接安装到系统 Python，`--no-dev` 同样排除开发依赖。适合对镜像分层不敏感、希望 Dockerfile 更简洁的场景。
+
+### CI/CD 优化
+
+在 GitHub Actions 等流水线中，可结合 uv 的高速缓存机制大幅缩短依赖安装时间。
+
+```yaml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --frozen
+
+      - name: Run tests
+        run: uv run pytest
+```
+
+`astral-sh/setup-uv` 官方 Action 会自动处理 uv 二进制下载和缓存目录配置。`enable-cache: true` 将依赖包缓存到 GitHub Actions 缓存服务，后续构建可直接复用，通常能将安装时间从分钟级降至秒级。
+
+对于需要区分运行和测试依赖的流水线，可以分步执行：
+
+```yaml
+      - name: Install production dependencies
+        run: uv sync --no-dev --frozen
+
+      - name: Install all dependencies for testing
+        run: uv sync --frozen
+```
+
+### 环境变量调优
+
+uv 支持一系列环境变量，用于在生产环境中精细控制行为：
+
+| 变量 | 说明 | 生产建议 |
+|---|---|---|
+| `UV_COMPILE_BYTECODE=1` | 安装时预编译 `.pyc` 文件 | 启用，可显著缩短容器启动时间 |
+| `UV_NO_INSTALLER_METADATA=1` | 不记录 uv 作为安装器元数据 | 若需与 pip 混用或审计时保持整洁，可启用 |
+| `UV_LINK_MODE=copy` | 强制复制而非符号链接/硬链接包文件 | 在 Docker 或只读文件系统中使用，避免跨设备链接错误 |
+| `UV_CACHE_DIR` | 自定义全局缓存目录 | CI 中设置为持久化路径，实现跨构建缓存复用 |
+
+示例：在 Dockerfile 中启用字节码编译以加速冷启动
+
+```dockerfile
+ENV UV_COMPILE_BYTECODE=1
+RUN uv sync --no-dev --frozen
+```
+
+### 可复现构建保障
+
+`uv.lock` 是 uv 实现可复现构建的核心。它锁定了所有直接和传递依赖的确切版本、哈希值及平台信息，确保任何人在任何时间执行 `uv sync` 都得到完全一致的依赖树。
+
+在生产环境中务必遵循以下原则：
+
+- **提交锁文件**：`uv.lock` 必须纳入版本控制，与 `pyproject.toml` 一同提交。
+- **使用 `--frozen`**：生产构建、CI 测试、容器镜像构建中均使用 `uv sync --frozen`，拒绝隐式更新。
+- **分离开发依赖**：通过 `dependency-groups` 或 `--dev` 标记区分运行时与测试/格式化工具，生产部署时始终携带 `--no-dev`。
+
 ## 参考资料
 
 - [Python 包管理器 uv：原理简介与使用指南](https://juejin.cn/post/7507207338686169107)
