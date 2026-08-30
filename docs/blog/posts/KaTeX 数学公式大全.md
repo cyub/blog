@@ -3,10 +3,10 @@ title: KaTeX 数学公式大全
 authors:
   - Tinker
 tags:
-  - KaTeX
+  - 编码与协议/KaTeX
 categories:
   - 翻译
-  - 编码与协议/KaTeX
+  - 编码与协议
 date: 2026-08-08 10:50:00
 ---
 
