@@ -13,6 +13,8 @@ dependencies = [
     "mkdocs-jupyter>=0.25.1",
     "mkdocs-markmap>=2.5.2",
     "mkdocs-mermaid2-plugin>=1.2.3",
+    "mkdocs-minify-plugin>=0.8.0",
     "mkdocs-print-site-plugin>=2.8",
+    "mkdocs-redirects>=1.2.3",
     "mkdocs-rss-plugin>=1.17.4",
 ]

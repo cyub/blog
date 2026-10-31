@@ -2,6 +2,9 @@ site_name: Tink's Blog
 site_description: 一只船孤独地航行在海上，它既不寻求幸福，也不逃避幸福。它只是向前航行，底下是沉静碧蓝的大海，而头顶是金色的太阳。
 site_author: Tink
 site_url: https://cyub.cyub.vip
+repo_url: https://github.com/cyub/blog
+repo_name: cyub/blog
+edit_uri: edit/main/docs/
 strict: false
 
 # Copyright
@@ -34,6 +37,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.tracking
+    - progressbar
     - search.highlight
     - search.share
     - search.suggest
@@ -75,9 +79,9 @@ plugins:
           case: lower
       tags_hierarchy: true
 
-  # - git-revision-date-localized:
-  #     type: iso_date
-  #     enable_creation_date: true
+  - git-revision-date-localized:
+      type: date
+      enable_creation_date: true
   - mkdocs-jupyter:
       include: ["*.ipynb"]
   - glightbox
@@ -85,6 +89,8 @@ plugins:
   #     repository: cyub/blog
   #     branch: v2
   - markmap
+  - redirects:
+      redirect_maps: {}
   - rss:
       length: 1000
       use_git: true
@@ -93,6 +99,8 @@ plugins:
         json_updated: feed-updated.json
         rss_created: feed.xml
         rss_updated: feed-updated.xml
+  - minify:
+      minify_html: true
 
 # Additional configuration
 extra:
