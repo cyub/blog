@@ -1,0 +1,73 @@
+<svg viewBox="0 0 720 376" width="720" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
+  </style>
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#22c55e"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#a855f7"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="720" height="376" fill="#ffffff"/>
+
+  <text x="360" y="34" font-size="16" fill="#1e293b" text-anchor="middle">Heeler 连接 Mac 的两种方式</text>
+
+  <!-- 方式 A -->
+  <rect x="24" y="58" width="320" height="276" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="6,4"/>
+  <text x="34" y="76" font-size="11" fill="#64748b">方式 A · Tailscale 直连（大多数人）</text>
+
+  <path d="M184,151 L 184,165" fill="none" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <path d="M184,235 L 184,249" fill="none" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+  <rect x="44" y="92" width="280" height="54" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="184" y="114" font-size="12" fill="#1e40af" text-anchor="middle">iPhone</text>
+  <text x="184" y="132" font-size="12" fill="#1e40af" text-anchor="middle">Heeler</text>
+  <rect x="44" y="176" width="280" height="54" rx="6" fill="#f3e8ff" stroke="#a855f7"/>
+  <text x="184" y="198" font-size="12" fill="#6b21a8" text-anchor="middle">Tailscale</text>
+  <text x="184" y="216" font-size="12" fill="#6b21a8" text-anchor="middle">手机内嵌 tsnet</text>
+  <rect x="44" y="260" width="280" height="54" rx="6" fill="#d1fae5" stroke="#22c55e"/>
+  <text x="184" y="282" font-size="12" fill="#166534" text-anchor="middle">Mac</text>
+  <text x="184" y="300" font-size="12" fill="#166534" text-anchor="middle">herdr + agent</text>
+
+  <text x="196" y="161" font-size="10" fill="#64748b">连入 tailnet</text>
+  <text x="196" y="247" font-size="10" fill="#64748b">100.87.234.56:22</text>
+
+  <!-- 方式 B -->
+  <rect x="376" y="58" width="320" height="276" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="6,4"/>
+  <text x="386" y="76" font-size="11" fill="#64748b">方式 B · 跳板机（开着代理时）</text>
+
+  <path d="M536,151 L 536,165" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+  <path d="M536,235 L 536,249" fill="none" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+  <rect x="396" y="92" width="280" height="54" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="536" y="114" font-size="12" fill="#1e40af" text-anchor="middle">iPhone</text>
+  <text x="536" y="132" font-size="12" fill="#1e40af" text-anchor="middle">Heeler</text>
+  <rect x="396" y="176" width="280" height="54" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="536" y="198" font-size="12" fill="#b45309" text-anchor="middle">VPS 跳板机</text>
+  <text x="536" y="216" font-size="12" fill="#b45309" text-anchor="middle">固定公网 IP</text>
+  <rect x="396" y="260" width="280" height="54" rx="6" fill="#d1fae5" stroke="#22c55e"/>
+  <text x="536" y="282" font-size="12" fill="#166534" text-anchor="middle">Mac</text>
+  <text x="536" y="300" font-size="12" fill="#166534" text-anchor="middle">herdr + agent</text>
+
+  <text x="548" y="161" font-size="10" fill="#64748b">SSH 公网 IP:22</text>
+  <text x="548" y="247" font-size="10" fill="#64748b">tailnet 内转发</text>
+
+  <!-- 颜色图例 -->
+  <path d="M168,348 L 186,348" fill="none" stroke="#3b82f6" stroke-width="3"/>
+  <text x="198" y="352" font-size="10" fill="#64748b">iPhone</text>
+  <path d="M258,348 L 276,348" fill="none" stroke="#a855f7" stroke-width="3"/>
+  <text x="288" y="352" font-size="10" fill="#64748b">Tailscale</text>
+  <path d="M370,348 L 388,348" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <text x="400" y="352" font-size="10" fill="#64748b">VPS 跳板机</text>
+  <path d="M485,348 L 503,348" fill="none" stroke="#22c55e" stroke-width="3"/>
+  <text x="515" y="352" font-size="10" fill="#64748b">Mac</text>
+</svg>

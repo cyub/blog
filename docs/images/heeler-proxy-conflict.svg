@@ -1,0 +1,57 @@
+<svg viewBox="0 0 720 376" width="720" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
+  </style>
+  <defs>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#22c55e"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="720" height="376" fill="#ffffff"/>
+
+  <text x="360" y="34" font-size="16" fill="#1e293b" text-anchor="middle">为什么 iPhone 开代理会打断 Heeler</text>
+
+  <!-- macOS 组 -->
+  <rect x="24" y="58" width="320" height="276" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="6,4"/>
+  <text x="34" y="76" font-size="11" fill="#64748b">macOS · ClashX（系统代理）</text>
+
+  <path d="M184,151 L 184,165" fill="none" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  <path d="M184,235 L 184,249" fill="none" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+  <rect x="44" y="92" width="280" height="54" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="184" y="114" font-size="12" fill="#1e40af" text-anchor="middle">ClashX</text>
+  <text x="184" y="132" font-size="12" fill="#1e40af" text-anchor="middle">只改系统 HTTP/SOCKS 代理</text>
+  <rect x="44" y="176" width="280" height="54" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="184" y="198" font-size="12" fill="#b45309" text-anchor="middle">只有 HTTP 类 App</text>
+  <text x="184" y="216" font-size="12" fill="#b45309" text-anchor="middle">受影响</text>
+  <rect x="44" y="260" width="280" height="54" rx="6" fill="#d1fae5" stroke="#22c55e"/>
+  <text x="184" y="282" font-size="12" fill="#166534" text-anchor="middle">Tailscale 绕过代理</text>
+  <text x="184" y="300" font-size="12" fill="#166534" text-anchor="middle">共存</text>
+
+  <!-- iOS 组 -->
+  <rect x="376" y="58" width="320" height="276" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="6,4"/>
+  <text x="386" y="76" font-size="11" fill="#64748b">iOS · Shadowrocket（系统 VPN）</text>
+
+  <path d="M536,151 L 536,165" fill="none" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+  <path d="M536,235 L 536,249" fill="none" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+  <rect x="396" y="92" width="280" height="54" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="536" y="114" font-size="12" fill="#1e40af" text-anchor="middle">Shadowrocket</text>
+  <text x="536" y="132" font-size="12" fill="#1e40af" text-anchor="middle">系统级 VPN</text>
+  <rect x="396" y="176" width="280" height="54" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="536" y="198" font-size="12" fill="#b45309" text-anchor="middle">抓走手机全部流量</text>
+  <text x="536" y="216" font-size="12" fill="#b45309" text-anchor="middle">（含 UDP）</text>
+  <rect x="396" y="260" width="280" height="54" rx="6" fill="#fce7f3" stroke="#ec4899"/>
+  <text x="536" y="282" font-size="12" fill="#9d174d" text-anchor="middle">Heeler 的 Tailscale 被劫持</text>
+  <text x="536" y="300" font-size="12" fill="#9d174d" text-anchor="middle">断开</text>
+
+  <!-- 颜色图例 -->
+  <path d="M238,348 L 256,348" fill="none" stroke="#22c55e" stroke-width="3"/>
+  <text x="268" y="352" font-size="10" fill="#64748b">macOS：Tailscale 共存</text>
+  <path d="M420,348 L 438,348" fill="none" stroke="#ef4444" stroke-width="3"/>
+  <text x="450" y="352" font-size="10" fill="#64748b">iOS：Tailscale 被劫持</text>
+</svg>
